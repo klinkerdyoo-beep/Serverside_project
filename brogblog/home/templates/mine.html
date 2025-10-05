@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bloggr</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Newsreader:wght@400;500;700;800&amp;family=Noto+Sans:wght@400;500;700;900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#117dd4",
+            "background-light": "#f6f7f8",
+            "background-dark": "#101a22",
+          },
+          fontFamily: {
+            "display": ["Newsreader"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    .category-btn {
+      color: var(--category-text-color);
+      background-color: var(--category-bg-color);
+    }
+    .category-btn.dark {
+      color: var(--category-dark-text-color);
+      background-color: var(--category-dark-bg-color);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200">
+<div class="flex flex-col min-h-screen">
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center gap-8">
+<a class="flex items-center gap-2 text-xl font-bold text-slate-900 dark:text-white" href="#">
+<span class="material-symbols-outlined text-primary text-3xl">article</span>
+              Bloggr
+            </a>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Explore</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Write</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="form-input w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 h-10 placeholder:text-slate-400 pl-10 pr-4 text-sm" placeholder="Search" value=""/>
+</div>
+<button class="flex items-center justify-center rounded-full h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBSF_c_AnQVMQQiqLGIpSwMcREXfm-JNx43zVQmUSrNnFKDg0NzulIxRZvvCAX2TOYumglEE2H7EaXuPktxwffQCflhSTJcZPMGGHQxLa29qEBhDAoPSHdCjbhLyZwNFFyljPhYr-iqNIFK7AUq4guzUrERwLzTFhpEs6CqJMnmyUwQUKghy0FkoZuvCrqPPTEZqhPb7VlPmNInqt7wQUVEeHza0kP8SjDwl_9guOrNHVJXXWBU6TVaVtbufQORjbQ9nHf-N-2NrpY");'></div>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-4xl mx-auto">
+<section class="mb-8">
+<h2 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white">Categories</h2>
+<div class="relative">
+<div class="flex items-center gap-3 overflow-x-auto pb-4 no-scrollbar" id="categories-container">
+<button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #e0f2fe; --category-text-color: #0c4a6e; --category-dark-bg-color: #1e3a8a; --category-dark-text-color: #dbeafe;">Technology</button>
+<button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #e0f7fa; --category-text-color: #164e63; --category-dark-bg-color: #164e63; --category-dark-text-color: #e0f7fa;">Travel</button>
+<button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #fef3c7; --category-text-color: #78350f; --category-dark-bg-color: #78350f; --category-dark-text-color: #fef3c7;">Food</button>
+<button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #dcfce7; --category-text-color: #166534; --category-dark-bg-color: #166534; --category-dark-text-color: #dcfce7;">Health</button>
+<button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #fce7f3; --category-text-color: #831843; --category-dark-bg-color: #831843; --category-dark-text-color: #fce7f3;">Lifestyle</button>
+<button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #e5e7eb; --category-text-color: #374151; --category-dark-bg-color: #374151; --category-dark-text-color: #e5e7eb;">Finance</button>
+<button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #ede9fe; --category-text-color: #5b21b6; --category-dark-bg-color: #5b21b6; --category-dark-text-color: #ede9fe;">Education</button>
+<button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #fee2e2; --category-text-color: #991b1b; --category-dark-bg-color: #991b1b; --category-dark-text-color: #fee2e2;">Art</button>
+<button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #dbeafe; --category-text-color: #1e40af; --category-dark-bg-color: #1e40af; --category-dark-text-color: #dbeafe;">Science</button>
+<button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #fae8ff; --category-text-color: #701a75; --category-dark-bg-color: #701a75; --category-dark-text-color: #fae8ff;">Sports</button>
+</div>
+</div>
+</section>
+<div class="border-b border-slate-200 dark:border-slate-800 mb-6">
+<nav class="flex gap-4">
+<a class="px-3 py-2 text-sm font-bold border-b-2 border-primary text-primary" href="#">Recommended</a>
+<a class="px-3 py-2 text-sm font-bold border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-primary hover:border-primary transition-colors" href="#">Popular</a>
+<a class="px-3 py-2 text-sm font-bold border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-primary hover:border-primary transition-colors" href="#">My Feed</a>
+</nav>
+</div>
+<div class="space-y-6">
+<div class="bg-background-light dark:bg-background-dark p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-start gap-4">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-24 flex-shrink-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAXRHM0Fv4I5s9aO3LUpr6qJNbadW7zyWDhO6eU_LaK7C3KcDVfzVcdXk-a6EaEXyRMJGxf46SZOgpmg1e04qQRqxXG_Oj0FFGDInZS6dN9IXJbBmiUCNq80Xa9B7PAQvI4UPKgnzq3ESPUBZWm_iBxXpYenOiRluIePV2XAPT1_ZGGVLNBhX6i83L9ojPwhYgvz0VTYO-zx5aev1gHbrmtxM0RyVVPp_nWhdoyTgDbJosDJ47giW64F2HUoYJN0J44Boa8eGjp9cc");'></div>
+<div class="flex-grow">
+<p class="text-lg font-bold text-slate-900 dark:text-white mb-1 line-clamp-2">The Future of AI in Software Development</p>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-3">Technology</p>
+<div class="flex items-center gap-4 text-slate-500 dark:text-slate-400">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-base">favorite</span>
+<span class="text-xs font-medium">123</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-base">chat_bubble</span>
+<span class="text-xs font-medium">45</span>
+</div>
+</div>
+</div>
+<button class="text-slate-400 dark:text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">bookmark_add</span>
+</button>
+</div>
+</div>
+<div class="bg-background-light dark:bg-background-dark p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-start gap-4">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-24 flex-shrink-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAPMkqvIw1oqD3udeSKfyTwOgDLFdmDqDevlMxMO2f_aAuSb9tD0brQjZayDFEIvG-vNsJrq4V2MPyPNUA5pIWHqXO01Kn-icPxJRiYq2Tz7zfrFwAZFqnsSaKdRt079YVfJ1-BoCcKr6ISDB2r197xo0X8BUBdB0SYYO2vq38G9iKPG_QNGfILKqVIqHF8o32RLT_8oj2I9Qwgt8bEV3LfayemygN0VfcbvE9jarZ835jFpPQnQ2GNmqMJ108HNVFgE3cz-Jxjzy0");'></div>
+<div class="flex-grow">
+<p class="text-lg font-bold text-slate-900 dark:text-white mb-1 line-clamp-2">Exploring the Hidden Gems of Southeast Asia</p>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-3">Travel</p>
+<div class="flex items-center gap-4 text-slate-500 dark:text-slate-400">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-base">favorite</span>
+<span class="text-xs font-medium">87</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-base">chat_bubble</span>
+<span class="text-xs font-medium">22</span>
+</div>
+</div>
+</div>
+<button class="text-primary">
+<span class="material-symbols-outlined">bookmark</span>
+</button>
+</div>
+</div>
+<div class="bg-background-light dark:bg-background-dark p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-start gap-4">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-24 flex-shrink-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD6vkOGdYWGUAvMugMixp_PIlf8b_BAF9gcZ3qmW5JtidwIvQ9s3WskiE7q_Be3M4B_uBIv6dfqU3XnrAcsGOmg7DiuZ17K-tJo-ihQLtdSso9DQEATdg27qJlZKi53PC4E7ykKx6p4Ao1y6XKPaFOXCZBbASzax7R9ezRtuQxtSIScePjRXHtV8BNt7bIc5SycHQO0_Fxsx_MFdZnjs2syVEouVOipX8aIQh0VICcrrNn5ZPBsQVz175YLBq-RF4WZheIOMZUy9oU");'></div>
+<div class="flex-grow">
+<p class="text-lg font-bold text-slate-900 dark:text-white mb-1 line-clamp-2">Mastering the Art of Sourdough Baking</p>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-3">Food</p>
+<div class="flex items-center gap-4 text-slate-500 dark:text-slate-400">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-base">favorite</span>
+<span class="text-xs font-medium">156</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-base">chat_bubble</span>
+<span class="text-xs font-medium">68</span>
+</div>
+</div>
+</div>
+<button class="text-slate-400 dark:text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">bookmark_add</span>
+</button>
+</div>
+</div>
+<div class="bg-background-light dark:bg-background-dark p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-start gap-4">
+<div class="flex-grow">
+<p class="text-lg font-bold text-slate-900 dark:text-white mb-1 line-clamp-2">The Science of Sleep: Optimizing Your Rest</p>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-3">Health</p>
+<div class="flex items-center gap-4 text-slate-500 dark:text-slate-400">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-base">favorite</span>
+<span class="text-xs font-medium">98</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-base">chat_bubble</span>
+<span class="text-xs font-medium">34</span>
+</div>
+</div>
+</div>
+<button class="text-slate-400 dark:text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">bookmark_add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>
