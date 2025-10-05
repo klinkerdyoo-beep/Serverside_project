@@ -9,9 +9,9 @@ from django.core.files.storage import FileSystemStorage
 
 from django.db import transaction
 
-class StudentView(View):
+class HomeView(View):
 
     def get(self, request):
         
-        return render(request, "neoy_havepic.html")
+        return render(request, "home.html")
     

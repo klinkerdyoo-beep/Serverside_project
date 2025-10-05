@@ -1,0 +1,11 @@
+.font-display {
+                font-family: 'Newsreader', serif;
+}
+.category-btn {
+color: var(--category-text-color);
+background-color: var(--category-bg-color);
+}
+.category-btn.dark {
+color: var(--category-dark-text-color);
+background-color: var(--category-dark-bg-color);
+}

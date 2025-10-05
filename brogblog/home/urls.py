@@ -5,5 +5,5 @@ from . import views
 
 urlpatterns = [
     # ex: /polls/
-    path("", views.StudentView.as_view(), name="index"),
+    path("", views.HomeView.as_view(), name="home"),
 ]
