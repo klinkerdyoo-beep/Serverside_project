@@ -1,3 +1,4 @@
+{% load static %}
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex items-center justify-between h-16">
                         <div class="flex items-center gap-4">
@@ -24,7 +25,18 @@
                                     <path d="M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z"></path>
                                 </svg>
                             </button>
-                            <div class="w-10 h-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAFvN6jq3Ifiut0cIKCRzpLKkvD7wR0nk3lPz6tMXKdJy89ObmHA0-tXZUJp9beVBNoKtI0xkXIU_T2xrD8m_-PHJribo6s9O8KbFJfd73yZ7mc-f3in1rcN3wDWKh_32ISMcaFmbgp59K4mzyo4B9q3P9X-Zr-eyrTGM0lxNqgYlMFmuchiwbC-XvTsGvJUyJm50uKxTQJkaRCTKy65HOnqaQvKCJDlx2aVHH5LxgyVZlFtWDDgVxAMUzarMQgB1RwW2vAc8n3Tw");'></div>
+                            {% if request.user.is_authenticated %}
+                                <div class="flex items-center gap-4">
+                                    <span>{{ request.user.username }}</span>
+                                    <div class="w-10 h-10 rounded-full bg-cover bg-center"
+                                        style="background-image: 
+                                        url('{% if request.user.is_authenticated and request.user.user.profile_path %}{{ request.user.user.profile_path.url }}{% else %}{% static 'no-image.png' %}{% endif %}');">
+                                    </div>
+
+                                </div>
+                            {% endif %}
+
+
                         </div>
                     </div>
                 </div>

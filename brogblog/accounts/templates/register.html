@@ -2,29 +2,57 @@
 {% load static %}
 
 {% block title %} Register {% endblock %}
+
 {% block authen_content %}
-        <h2 class="text-3xl font-bold font-display mb-6 text-center text-text-light dark:text-text-dark">
-            Create an Account
-        </h2>
-        <form enctype="multipart/form-data" method="post">
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1" for="username">Username</label>
-                <input class="w-full px-4 py-2 bg-background-light dark:bg-background-dark border border-gray-300 dark:border-gray-600 rounded-md focus:ring-primary focus:border-primary text-text-light dark:text-text-dark" id="username" name="username" required type="text"/>
-            </div>
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1" for="email_register">Email Address</label>
-                <input class="w-full px-4 py-2 bg-background-light dark:bg-background-dark border border-gray-300 dark:border-gray-600 rounded-md focus:ring-primary focus:border-primary text-text-light dark:text-text-dark" id="email_register" name="email" required type="email"/>
-            </div>
-            <div class="mb-6">
-                <label class="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1" for="password_register">Password</label>
-                <input class="w-full px-4 py-2 bg-background-light dark:bg-background-dark border border-gray-300 dark:border-gray-600 rounded-md focus:ring-primary focus:border-primary text-text-light dark:text-text-dark" id="password_register" name="password" required type="password"/>
-            </div>
-            <div class="mb-6">
-                <label class="block text-sm font-medium text-subtle-light dark:text-subtle-dark mb-1" for="profile_img">Profile Image</label>
-                <input accept="image/*" class="w-full text-sm text-subtle-light dark:text-subtle-dark file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary/10 dark:file:bg-primary/20 file:text-primary hover:file:bg-primary/20 dark:hover:file:bg-primary/30" id="profile_img" name="profile_img" type="file"/>
-            </div>
-            <button class="w-full bg-primary text-white font-bold py-3 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-background-dark transition-colors duration-300" type="submit">
-                Register
-            </button>
-        </form>
+<h2 class="text-3xl font-bold font-display mb-6 text-center text-text-light dark:text-text-dark">
+    Create an Account
+</h2>
+<form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    <div class="mb-4">
+        <label for="{{ form.username.id_for_label }}">Username</label>
+        {{ form.username }}
+        {{ form.username.errors }}
+    </div>
+    <div class="mb-4">
+        <label for="{{ form.email.id_for_label }}">E-mail</label>
+        {{ form.email }}
+        {{ form.email.errors }}
+    </div>
+    <div class="mb-6">
+        <label for="{{ form.password.id_for_label }}">Password</label>
+        {{ form.password }}
+        {{ form.password.errors }}
+    </div>
+    <div class="mb-6">
+        <label>Profile Image (optional):  </label>
+        <label for="{{ form.profile_img.id_for_label }}" 
+            class="inline-block cursor-pointer px-4 py-2 rounded-lg bg-white text-blue-600 hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-background-dark transition-colors duration-300">
+            Choose Image
+        </label>
+
+        <!-- {# input ถูกซ่อนด้วย class hidden จาก forms.py #} -->
+        {{ form.profile_img }}
+        {{ form.profile_img.errors }}
+        <img id="preview" class="m-auto mt-3 rounded-lg border max-h-64 object-contain hidden" alt="Preview" />
+    </div>
+    
+    <button class="w-full bg-primary text-white font-bold py-3 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-background-dark transition-colors duration-300" type="submit">
+        Register
+    </button>
+</form>
+{% endblock %}
+{% block script %}
+<script>
+    // ใช้ id เหมือนที่ตั้งกับ label
+    const image = document.getElementById('id_profile_img')
+    const preview = document.getElementById('preview')
+    image.addEventListener('change', () => {
+      const [file] = image.files
+      if (file) {
+        preview.src = URL.createObjectURL(file)
+        preview.classList.remove('hidden')
+      }
+    })
+</script>
 {% endblock %}
