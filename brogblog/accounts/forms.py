@@ -32,11 +32,10 @@ class LoginForm(forms.Form):
         if email and password:
             try:
                 findUser = User.objects.get(auth_user__email=email)
-                auth_user = findUser.auth_user
             except User.DoesNotExist:
                 raise forms.ValidationError("No account found.")
 
-            user = authenticate(username=auth_user.username, password=password)
+            user = authenticate(username=findUser.auth_user.username, password=password)
 
             if user is None:
                 raise forms.ValidationError("Incorrect password.")
