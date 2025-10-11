@@ -18,6 +18,20 @@ class LoginView(View):
             return redirect('blog-list')  
 
         return render(request,'login.html', {"form":form})
+    
+class RegisterView(View):
+    def get(self, request):
+        form = AuthenticationForm()
+        return render(request, 'register.html', {"form": form})
+    
+    def post(self, request):
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user() 
+            login(request,user)
+            return redirect('blog-list')  
+
+        return render(request,'register.html', {"form":form})
 
 
 class LogoutView(View):

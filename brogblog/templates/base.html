@@ -48,27 +48,7 @@
                 {% block content %}
                 {% endblock %}
             </main>
-            <footer class="bg-background-light dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 mt-auto">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                    <div class="flex flex-col md:flex-row justify-between items-center">
-                        <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 md:mb-0">
-                            brogblog
-                        </p>
-                        <div class="flex gap-6">
-                            <a class="text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary transition-colors" href="#">
-                                <svg fill="currentColor" height="24px" viewBox="0 0 256 256" width="24px" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M247.39,68.94A8,8,0,0,0,240,64H209.57A48.66,48.66,0,0,0,168.1,40a46.91,46.91,0,0,0-33.75,13.7A47.9,47.9,0,0,0,120,88v6.09C79.74,83.47,46.81,50.72,46.46,50.37a8,8,0,0,0-13.65,4.92c-4.31,47.79,9.57,79.77,22,98.18a110.93,110.93,0,0,0,21.88,24.2c-15.23,17.53-39.21,26.74-39.47,26.84a8,8,0,0,0-3.85,11.93c.75,1.12,3.75,5.05,11.08,8.72C53.51,229.7,65.48,232,80,232c70.67,0,129.72-54.42,135.75-124.44l29.91-29.9A8,8,0,0,0,247.39,68.94Z"></path>
-                                </svg>
-                            </a>
-                            <a class="text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary transition-colors" href="#">
-                                <svg fill="currentColor" height="24px" viewBox="0 0 256 256" width="24px" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160ZM176,24H80A56.06,56.06,0,0,0,24,80v96a56.06,56.06,0,0,0,56,56h96a56.06,56.06,0,0,0,56-56V80A56.06,56.06,0,0,0,176,24Z"></path>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            {% include "partials/footer.html" %}
         </div>
         <script src="{% block script_src %}{% endblock %}"></script>
         {% block script %}{% endblock %}

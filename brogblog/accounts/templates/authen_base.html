@@ -1,0 +1,11 @@
+{% extends 'base_noauthen.html' %}
+{% load static %}
+
+{% block content %}
+<main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 flex justify-center"> 
+    <div class="w-full max-w-md bg-surface-light dark:bg-surface-dark p-8 rounded-lg shadow-md">
+        {% block authen_content %}
+        {% endblock %}
+    </div>
+</main>
+{% endblock %}
