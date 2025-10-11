@@ -52,7 +52,7 @@ class RegisterForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput, required=True)
     profile_img = forms.FileField(
         required=False,
-        # widget=forms.FileInput(attrs={"class": "hidden"})
+        widget=forms.FileInput(attrs={"class": "hidden"})
     )
     bio = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 2}))
     def save(self):
