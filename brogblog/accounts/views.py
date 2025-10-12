@@ -41,8 +41,9 @@ class RegisterView(View):
                         member_group = Group.objects.get(name="member")
                     except Group.DoesNotExist:
                         member_group = Group.objects.create(name="member")
-
                     auth_user.groups.add(member_group)
+
+                    login(request, auth_user)
                     return redirect('home')
                 else:
                     raise transaction.TransactionManagementError("Error")
