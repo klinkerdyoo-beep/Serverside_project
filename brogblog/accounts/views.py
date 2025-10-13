@@ -30,25 +30,47 @@ class RegisterView(View):
 
     def post(self, request):
         form = RegisterForm(request.POST, request.FILES)
-        try:
-            with transaction.atomic():
-                if form.is_valid():
+        if form.is_valid():
+            try:
+                with transaction.atomic():
                     user_profile = form.save()
                     auth_user = user_profile.auth_user
 
-                    #add member role
-                    try:
-                        member_group = Group.objects.get(name="member")
-                    except Group.DoesNotExist:
-                        member_group = Group.objects.create(name="member")
+                    # Add member role
+                    member_group, _ = Group.objects.get_or_create(name="member")
                     auth_user.groups.add(member_group)
 
                     login(request, auth_user)
                     return redirect('home')
+
+            except Exception as e:
+                # fix exception: duplicate key value violates unique constraint "auth_user_pkey"
+                if "duplicate key value" in str(e):
+                    from django.db import connection
+                    with connection.cursor() as cursor:
+                        cursor.execute("""
+                            SELECT setval(
+                                pg_get_serial_sequence('auth_user','id'),
+                                COALESCE((SELECT MAX(id) FROM auth_user), 1) + 1,
+                                false
+                            );
+                        """)
+                    # retry register
+                    try:
+                        user_profile = form.save()
+                        auth_user = user_profile.auth_user
+                        member_group, _ = Group.objects.get_or_create(name="member")
+                        auth_user.groups.add(member_group)
+                        login(request, auth_user)
+                        return redirect('home')
+                    except Exception as e2:
+                        print("retry failed:", e2)
+                        return render(request, 'register.html', {"form": form})
                 else:
-                    raise transaction.TransactionManagementError("Error")
-        except Exception as e:
-            print("exception:", e)
+                    print("exception:", e)
+                    return render(request, 'register.html', {"form": form})
+        else:
+            print("form not valid")
             return render(request, 'register.html', {"form": form})
 
 class LogoutView(View):
