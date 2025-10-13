@@ -9,3 +9,17 @@ background-color: var(--category-bg-color);
 color: var(--category-dark-text-color);
 background-color: var(--category-dark-bg-color);
 }
+
+.form-input {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    background-color: var(--background-light);
+    border: 1px solid #ccc;
+    border-radius: 0.375rem;
+    color: var(--text-light);
+}
+.form-input:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
