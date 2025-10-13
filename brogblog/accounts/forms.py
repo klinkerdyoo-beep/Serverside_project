@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate, login
 from django.forms import ModelForm, ValidationError, FileInput
 from django.core.validators import RegexValidator
 
-from brogblog.static.css.tailwinds import FIELD_INPUT_CLASSES
+from utils.tailwinds import FIELD_INPUT_CLASSES 
 
 class LoginForm(forms.Form):
     email = forms.EmailField(

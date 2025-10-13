@@ -6,4 +6,5 @@ from . import views
 urlpatterns = [
     # ex: /polls/
     path("", views.HomeView.as_view(), name="home"),
+    path("create-blog/", views.CreateBlogView.as_view(), name="create-blog"),
 ]

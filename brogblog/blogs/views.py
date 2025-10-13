@@ -13,10 +13,18 @@ from django.http import HttpRequest
 
 from django.db import transaction
 
+from brogblog.settings import LOGIN_URL
+
 class HomeView(View):
     # permission_required = ["blogs.view_blog"]
     # login_url = '/authen/login/'
 
     def get(self, request: HttpRequest):
         return render(request, "home.html")
+class CreateBlogView(View):
+    permission_required = ["blogs.add_blog"]
+    login_url = LOGIN_URL
+
+    def get(self, request: HttpRequest):
+        return render(request, "create_blog.html")
     
