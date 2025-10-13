@@ -9,10 +9,14 @@
                 Title
             {% endblock %}
         </title>
-        <link href="https://fonts.googleapis.com" rel="preconnect" />
+
+        <!-- font -->
+         <link href="https://fonts.googleapis.com" rel="preconnect" />
         <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-        <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+        <link href="https://fonts.googleapis.com/css2?family=Krub:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+        <!-- font -->
+
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
             tailwind.config = {
@@ -25,7 +29,9 @@
                             "background-dark": "#101922",
                         },
                         fontFamily: {
-                            "display": ["Newsreader"]
+                            "sans": ["Krub", 'sans-serif'],
+                            'th-playpen': ["Playpen Sans Thai", 'cursive'],
+                            "display": ["Newsreader"],
                         },
                         borderRadius: {
                             "DEFAULT": "0.5rem",
@@ -37,9 +43,12 @@
                 },
             }
         </script>
+        
         <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+
     </head>
-        <body class="font-display bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200">
+        <body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200">
         <div class="relative min-h-screen">
             <header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800">
                 {% if request.user.is_authenticated %}

@@ -1,2 +1,2 @@
 #for css
-FIELD_INPUT_CLASSES = "w-full px-4 py-2 bg-background-light dark:bg-background-dark border border-gray-300 dark:border-gray-600 rounded-md focus:ring-primary focus:border-primary text-text-light dark:text-text-dark"
+FIELD_INPUT_CLASSES = "font-thai w-full px-4 py-2 bg-background-light dark:bg-background-dark border border-gray-300 dark:border-gray-600 rounded-md focus:ring-primary focus:border-primary text-text-light dark:text-text-dark"

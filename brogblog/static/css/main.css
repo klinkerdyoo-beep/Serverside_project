@@ -1,13 +1,28 @@
-.font-display {
-                font-family: 'Newsreader', serif;
+/* @import url('https://fonts.googleapis.com/css2?family=Playpen+Sans+Thai&display=swap');
+body {
+    font-family: "Playpen Sans Thai", cursive;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+} */
+
+@layer utilities {
+  .font-th {
+    font-family: "Playpen Sans Thai", cursive;
+  }
 }
+
+/* .font-display {
+    font-family: 'Newsreader', serif;
+} */
+
 .category-btn {
-color: var(--category-text-color);
-background-color: var(--category-bg-color);
+    color: var(--category-text-color);
+    background-color: var(--category-bg-color);
 }
 .category-btn.dark {
-color: var(--category-dark-text-color);
-background-color: var(--category-dark-bg-color);
+    color: var(--category-dark-text-color);
+    background-color: var(--category-dark-bg-color);
 }
 
 .form-input {
