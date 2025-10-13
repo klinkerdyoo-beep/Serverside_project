@@ -27,7 +27,7 @@
     <div class="mb-6">
         <label>Profile Image (optional):  </label>
         <label for="{{ form.profile_img.id_for_label }}" 
-            class="inline-block cursor-pointer px-4 py-2 rounded-lg bg-white text-blue-600 hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-background-dark transition-colors duration-300">
+            class="inline-block cursor-pointer px-4 py-2 rounded-lg bg-white/80 text-blue-600 drop-shadow-sm hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-background-dark transition-colors duration-300">
             Choose Image
         </label>
 
@@ -37,7 +37,7 @@
         <img id="preview" class="m-auto mt-3 rounded-lg border max-h-64 object-contain hidden" alt="Preview" />
     </div>
     
-    <button class="w-full bg-primary text-white font-bold py-3 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-background-dark transition-colors duration-300" type="submit">
+    <button class="font-display font-bold w-full bg-primary text-white py-3 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-background-dark transition-colors duration-300" type="submit">
         Register
     </button>
 </form>

@@ -8,17 +8,19 @@ from django.contrib.auth import authenticate, login
 from django.forms import ModelForm, ValidationError, FileInput
 from django.core.validators import RegexValidator
 
+from utils.tailwinds import FIELD_INPUT_CLASSES 
+
 class LoginForm(forms.Form):
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={
-            "class": "w-full px-4 py-2 bg-background-light dark:bg-background-dark border border-gray-300 dark:border-gray-600 rounded-md focus:ring-primary focus:border-primary text-text-light dark:text-text-dark",
+            "class": FIELD_INPUT_CLASSES,
             "id": "id_email",
             "placeholder": "Enter your email"
         })
     )
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={
-            "class": "w-full px-4 py-2 bg-background-light dark:bg-background-dark border border-gray-300 dark:border-gray-600 rounded-md focus:ring-primary focus:border-primary text-text-light dark:text-text-dark",
+            "class": FIELD_INPUT_CLASSES,
             "id": "id_password",
             "placeholder": "Enter your password"
         })
@@ -47,9 +49,27 @@ class LoginForm(forms.Form):
         return self.cleaned_data.get("user")
 
 class RegisterForm(forms.Form):
-    username = forms.CharField(max_length=150, required=True)
-    email = forms.EmailField(required=True)
-    password = forms.CharField(widget=forms.PasswordInput, required=True)
+    username = forms.CharField(max_length=150, required=True,
+        widget=forms.TextInput(attrs={
+            "class": FIELD_INPUT_CLASSES,
+            "id": "id_username",
+            "placeholder": "Enter your username"
+        }))
+    email = forms.EmailField(required=True, 
+        widget=forms.EmailInput(attrs={
+            "class": FIELD_INPUT_CLASSES,
+            "id": "id_email",
+            "placeholder": "Enter your email"
+        }))
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            "class": FIELD_INPUT_CLASSES,
+            "id": "id_password",
+            "placeholder": "Enter your password"
+        }),
+        required=True
+    )
+
     profile_img = forms.FileField(
         required=False,
         widget=forms.FileInput(attrs={"class": "hidden"})
