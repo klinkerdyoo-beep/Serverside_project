@@ -15,7 +15,6 @@ from django.db import transaction
 from .models import *
 from tags.models import *
 from blogs.forms import BlogForm
-from brogblog.settings import LOGIN_URL
 
 class HomeView(View):
     # permission_required = ["blogs.view_blog"]
@@ -23,9 +22,9 @@ class HomeView(View):
 
     def get(self, request: HttpRequest):
         return render(request, "home.html")
-class CreateBlogView(View):
+class CreateBlogView(LoginRequiredMixin, PermissionRequiredMixin, View):
     permission_required = ["blogs.add_blog"]
-    login_url = LOGIN_URL
+    login_url = settings.LOGIN_URL
 
     def get(self, request: HttpRequest):
         blogform = BlogForm()
