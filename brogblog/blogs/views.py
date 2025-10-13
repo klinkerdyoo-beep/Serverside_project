@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.db.models import Count, Value
 from django.db.models.functions import Concat
-from .models import *
 
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
@@ -13,10 +12,29 @@ from django.http import HttpRequest
 
 from django.db import transaction
 
+from .models import *
+from tags.models import *
+from blogs.forms import BlogForm
+from brogblog.settings import LOGIN_URL
+
 class HomeView(View):
     # permission_required = ["blogs.view_blog"]
     # login_url = '/authen/login/'
 
     def get(self, request: HttpRequest):
         return render(request, "home.html")
+class CreateBlogView(View):
+    permission_required = ["blogs.add_blog"]
+    login_url = LOGIN_URL
+
+    def get(self, request: HttpRequest):
+        blogform = BlogForm()
+        blog_status = BlogStatus.objects.all()
+        cat_list = Category.objects.all()
+        context = {
+            "status": blog_status,
+            "category": cat_list,
+            "blogform": blogform,
+        }
+        return render(request, "create_blog.html", context)
     

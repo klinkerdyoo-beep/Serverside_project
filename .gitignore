@@ -205,3 +205,4 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+/brogblog/_draft_home
