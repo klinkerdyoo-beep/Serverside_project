@@ -14,7 +14,7 @@ from django.db import transaction
 
 from .models import *
 from tags.models import *
-from blogs.forms import BlogForm
+from blogs.forms import *
 
 class HomeView(View):
     # permission_required = ["blogs.view_blog"]
@@ -28,12 +28,14 @@ class CreateBlogView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
     def get(self, request: HttpRequest):
         blogform = BlogForm()
+        imgform = BlogImageForm()
         blog_status = BlogStatus.objects.all()
         cat_list = Category.objects.all()
         context = {
             "status": blog_status,
             "category": cat_list,
             "blogform": blogform,
+            "imgform": imgform,
         }
         return render(request, "create_blog.html", context)
     

@@ -1,5 +1,6 @@
 from django import forms
-from .models import Blog, BlogStatus
+from django.forms import ModelForm, ValidationError, FileInput
+from .models import *
 from tags.models import Category, Tag
 from django.contrib.auth.models import User as AuthUser
 from utils.tailwinds import *
@@ -46,3 +47,13 @@ class BlogForm(forms.ModelForm):
     class Meta:
         model = Blog
         fields = ['header', 'body', 'tags', 'category', 'blogstatus']
+
+
+class BlogImageForm(forms.ModelForm):
+    class Meta:
+        model = BlogImage
+        fields = ["image_path"]
+        widgets = {
+            # "image_path": FileInput(),
+            "image_path": FileInput(attrs={"class": "hidden"}),
+        }
