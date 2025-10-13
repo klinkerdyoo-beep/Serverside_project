@@ -1,5 +1,5 @@
 from django.db import models
-from accounts.models import User
+# from accounts.models import User
 
 
 class BlogStatus(models.Model):
@@ -13,7 +13,9 @@ class BlogStatus(models.Model):
 
 class Blog(models.Model):
     blog_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey('accounts.User',on_delete=models.CASCADE,
+        related_name='blogs'
+    )
     blogstatus = models.ForeignKey(BlogStatus, on_delete=models.CASCADE)
     header = models.CharField(max_length=200, null=False)
     body = models.TextField(null=False)
@@ -21,6 +23,7 @@ class Blog(models.Model):
     updated_date = models.DateTimeField(auto_now=True)
     views = models.IntegerField(default=0)
     likes = models.IntegerField(default=0)
+    
 
     def __str__(self):
         return self.header
@@ -34,7 +37,7 @@ class BlogImage(models.Model):
 
 class BlogExpiration(models.Model):
     blogexpiration_id = models.AutoField(primary_key=True)
-    reporting = models.ForeignKey(User, on_delete=models.CASCADE)
+    reporting = models.ForeignKey('accounts.User', on_delete=models.CASCADE)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
     expire_in = models.DateTimeField(null=False)
     reason = models.CharField(max_length=200, blank=True, null=True)
@@ -43,7 +46,7 @@ class BlogExpiration(models.Model):
         return f"{self.blog.header} expires on {self.expire_in}"
 
 class ViewingHistory(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
     viewed_at = models.DateTimeField(auto_now_add=True)
 
@@ -53,7 +56,7 @@ class ViewingHistory(models.Model):
 
 class Comment(models.Model):
     comment_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
 
     parent = models.ForeignKey(
