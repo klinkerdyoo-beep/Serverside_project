@@ -47,7 +47,8 @@ class RegisterView(View):
                     return redirect('home')
                 else:
                     raise transaction.TransactionManagementError("Error")
-        except Exception:
+        except Exception as e:
+            print("exception:", e)
             return render(request, 'register.html', {"form": form})
 
 class LogoutView(View):
