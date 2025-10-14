@@ -98,7 +98,7 @@
 
                         <button 
                             onclick="likeBlog(this)" 
-                            data-blog-id="{{ blog.blog_id }}"
+                            data-blog-like-id="{{ blog.blog_id }}"
                             class="flex items-center gap-1 text-sm transition-colors"
                             style="color: gray;">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -109,16 +109,18 @@
                             <span class="ml-1 text-sm text-slate-700 dark:text-slate-300">{{ blog.likes }}</span>
                         </button>
 
-                             <button 
-                                onclick="MarkBlog(this)" 
-                                data-blog-id="{{ blog.blog_id }}"
-                                class="flex items-center gap-1 text-sm text-gray-500 hover:text-red-500 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 5v16l7-5 7 5V5a2 2 0 00-2-2H7a2 2 0 00-2 2z" />
-                                </svg>
-                                <span class="ml-1 text-sm text-slate-700 dark:text-slate-300">{{ bookmark_count }}</span>
-                            </button>
+                        <button 
+                            onclick="MarkBlog(this)" 
+                            data-blog-bookmark-id="{{ blog.blog_id }}"
+                            class="flex items-center gap-1 text-sm transition-colors"
+                            style="color: gray;"> <!-- สี text ปุ่มเริ่มต้นเป็น gray -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 5v16l7-5 7 5V5a2 2 0 00-2-2H7a2 2 0 00-2 2z"
+                                    fill="none" /> <!-- fill เริ่มต้นเป็น none -->
+                            </svg>
+                            <span class="ml-1 text-sm text-slate-700 dark:text-slate-300">{{ bookmark_count }}</span>
+                        </button>
 
                             <button onclick="copyBlogLink('{{ request.build_absolute_uri }}')" 
                                 class="flex items-center gap-1 text-sm text-primary hover:text-primary-dark hover:underline">
@@ -134,10 +136,11 @@
 
                     </div>
                 </div>
-                <p class="text-sm text-red-500 mb-6">Bookmark count: {{ bookmark_count }}</p>
-                <p class="text-sm text-red-500 mb-6">Bookmark: {{ bookmarked }}</p>
-                
 
+                <!-- for test Bookmark  -->
+                <!-- <p class="text-sm text-red-500 mb-6">Bookmark count: {{ bookmark_count }}</p> -->
+                <!-- <p class="text-sm text-red-500 mb-6">Bookmark: {{ bookmarked }}</p> -->
+                
             <!-- Comments -->
             <section class="px-4 md:px-10 mb-12 mt-7">
                 <!-- fortest ID blog -->
@@ -162,30 +165,21 @@
 
 
                 <!-- Filter Dropdown -->
-                <div class="relative inline-block mb-4">
-                    <button id="filterBtn" class="inline-flex justify-between items-center px-4 py-2 bg-gray-200 rounded shadow hover:bg-gray-300 focus:outline-none">
-                        {% if sort_by == 'popular' %}
-                            ไลค์มากที่สุด
-                        {% else %}
-                            ล่าสุด
-                        {% endif %}
-                        <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
+<div class="relative inline-block mb-4">
+    <button id="filterBtn" class="inline-flex justify-between items-center px-4 py-2 bg-gray-200 rounded shadow hover:bg-gray-300 focus:outline-none transition">
+        <span>Filter</span> <!-- Always show "Filter" -->
+        <!-- Arrow -->
+        <svg id="filterArrow" class="ml-2 h-4 w-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+    </button>
 
-                    <div id="filterDropdown" class="hidden absolute mt-2 w-40 bg-white shadow-lg rounded z-10">
-                        <a href="?sort=latest" class="block px-4 py-2 hover:bg-gray-100
-                            {% if sort_by == 'latest' %}font-semibold{% endif %}">
-                            ล่าสุด
-                        </a>
-                        <a href="?sort=popular" class="block px-4 py-2 hover:bg-gray-100
-                            {% if sort_by == 'popular' %}font-semibold{% endif %}">
-                            ไลค์มากที่สุด
-                        </a>
-                    </div>
+    <div id="filterDropdown" class="hidden absolute mt-2 w-40 bg-white shadow-lg rounded z-10">
+        <a href="?sort=latest" class="block px-4 py-2 hover:bg-gray-100 {% if sort_by == 'latest' %}font-semibold{% endif %}">Latest</a>
+        <a href="?sort=popular" class="block px-4 py-2 hover:bg-gray-100 {% if sort_by == 'popular' %}font-semibold{% endif %}">Most Liked</a>
+    </div>
+</div>
 
-                </div>
 
                 <!-- Comments List -->
                     <div class="space-y-4 relative group">
@@ -209,7 +203,7 @@
                                 </div>
                             </div>
 
-                            <div class="flex gap-7">
+                            <div class="flex items-center gap-7 ">
 
                                 <button 
                                     onclick="likeComment(this)" 
@@ -231,7 +225,6 @@
 
                                 <!-- Reply Form -->
                                 <div class="mt-2">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">ตอบกลับ</label>
                                     <form method="post" action="{% url 'blog-detail' blog.blog_id %}">
                                         {% csrf_token %}
                                         <div class="flex gap-3 items-center">
@@ -265,7 +258,7 @@
                             class="text-sm text-blue-500 mt-2 flex items-center gap-1"
                             onclick="toggleReplies(this)"
                             data-count="{{ comment.replies.count }}">
-                            ▶ ดูคำตอบ ({{ comment.replies.count }})
+                            ▶ View Replies ({{ comment.replies.count }})
                             </button>
 
 
@@ -313,43 +306,52 @@
 
             // สลับข้อความในปุ่มด้วย (optional)
             if (repliesBox.classList.contains('hidden')) {
-                button.innerHTML = "▶ ดูคำตอบ (" + button.dataset.count + ")";
+                button.innerHTML = "▶ View Replies (" + button.dataset.count + ")";
             } else {
-                button.innerHTML = "▼ ซ่อนคำตอบ (" + button.dataset.count + ")";
+                button.innerHTML = "▼ Hide Replies (" + button.dataset.count + ")";
             }
         }
 
-        const filterBtn = document.getElementById('filterBtn');
-        const filterDropdown = document.getElementById('filterDropdown');
+const filterBtn = document.getElementById('filterBtn');
+const filterDropdown = document.getElementById('filterDropdown');
+const filterArrow = document.getElementById('filterArrow');
 
-        filterBtn.addEventListener('click', () => {
-            filterDropdown.classList.toggle('hidden');
-        });
+filterBtn.addEventListener('click', () => {
+    filterDropdown.classList.toggle('hidden');
+    filterArrow.classList.toggle('rotate-180'); // Rotate the arrow 180 degrees
+});
 
-        // ปิด dropdown เมื่อคลิกนอก
-        window.addEventListener('click', function(e) {
-            if (!filterBtn.contains(e.target) && !filterDropdown.contains(e.target)) {
-                filterDropdown.classList.add('hidden');
-            }
-        });
+// Close dropdown when clicking outside
+window.addEventListener('click', function(e) {
+    if (!filterBtn.contains(e.target) && !filterDropdown.contains(e.target)) {
+        filterDropdown.classList.add('hidden');
+        filterArrow.classList.remove('rotate-180');
+    }
+});
 
         function copyBlogLink(link) {
             navigator.clipboard.writeText(link)
                 .then(() => {
                     // แจ้งเตือนเมื่อคัดลอกสำเร็จ
-                    alert('ลิงก์ถูกคัดลอกแล้ว!');
+                    alert('Link copied successfully!');
                 })
                 .catch(err => {
-                    console.error('ไม่สามารถคัดลอกลิงก์ได้:', err);
+                    console.error('Failed to copy the link:', err);
                 });
         }
 
 function toggleLike(btn, type) {
     if (btn.disabled) return;
 
-    const idKey = type === 'blog' ? 'blogId' : 'commentId';
     const likedStorageKey = type === 'blog' ? 'liked_blog_' : 'liked_comment_';
-    const id = btn.dataset[idKey];
+    let id;
+
+    if (type === 'blog') {
+        id = btn.dataset.blogLikeId; // ต้องตรงกับ attribute
+    } else {
+        id = btn.dataset.commentId;
+    }
+
     const likedKey = likedStorageKey + id;
     const isLiked = localStorage.getItem(likedKey);
 
@@ -384,6 +386,7 @@ function toggleLike(btn, type) {
     .finally(() => btn.disabled = false);
 }
 
+
 // สำหรับ blog
 function likeBlog(btn) {
     toggleLike(btn, 'blog');
@@ -394,26 +397,10 @@ function likeComment(btn) {
     toggleLike(btn, 'comment');
 }
 
-// โหลดหน้าแล้วตรวจว่าไลค์ไว้แล้วหรือไม่
-document.addEventListener("DOMContentLoaded", function() {
-    document.querySelectorAll("[data-blog-id], [data-comment-id]").forEach(btn => {
-        const type = btn.dataset.blogId ? 'blog' : 'comment';
-        const id = type === 'blog' ? btn.dataset.blogId : btn.dataset.commentId;
-        const likedKey = (type === 'blog' ? 'liked_blog_' : 'liked_comment_') + id;
-        const svgPath = btn.querySelector('svg path');
-
-        if (localStorage.getItem(likedKey)) {
-            svgPath.setAttribute('fill', 'currentColor');
-            btn.style.color = 'red';
-        } else {
-            svgPath.setAttribute('fill', 'none');
-            btn.style.color = 'gray';
-        }
-    });
-});
-
 function MarkBlog(btn) {
-    const blogId = btn.dataset.blogId;
+    const blogId = btn.dataset.blogBookmarkId; // แก้จาก btn.dataset.blogId
+    if (!blogId) return;
+
     btn.disabled = true;
 
     fetch(`/blog-bookmark/${blogId}/`, {
@@ -426,41 +413,80 @@ function MarkBlog(btn) {
     .then(res => res.json())
     .then(data => {
         if (data.bookmarked !== undefined) {
-            const svg = btn.querySelector('svg');
+            const svgPath = btn.querySelector('svg path');
             const span = btn.querySelector('span');
 
-            // toggle สีไอคอนและปุ่ม
             if (data.bookmarked) {
-                svg.classList.add('text-blue-500'); // heart/bookmark สีเต็ม
-                btn.classList.add('text-blue-500');
+                svgPath.setAttribute('fill', 'blue');
+                btn.style.color = 'blue';
             } else {
-                svg.classList.remove('text-blue-500'); // กลับเป็นสีเดิม
-                btn.classList.remove('text-blue-500');
+                svgPath.setAttribute('fill', 'none');
+                btn.style.color = 'gray';
             }
 
-            // อัปเดตตัวเลข
             span.innerText = data.bookmark_count;
         }
     })
     .finally(() => btn.disabled = false);
 }
 
+
+
 // โหลดหน้าแล้วตรวจว่าถูก bookmark ไว้แล้ว
 document.addEventListener("DOMContentLoaded", function() {
-    const buttons = document.querySelectorAll("[data-blog-id]");
-    buttons.forEach(btn => {
-        const blogId = btn.dataset.blogId;
 
-        {% if request.user.is_authenticated %}
-        {% for b in request.user.user.bookmarked_posts.all %}
-        if (blogId == '{{ b.blog_id }}') {
-            btn.querySelector('svg').classList.add('text-blue-500');
-            btn.classList.add('text-blue-500');
+    // โหลดหน้าแล้วตรวจสอบ like blog
+
+    document.querySelectorAll("[data-comment-id]").forEach(btn => {
+        const id = btn.dataset.commentId; // ใช้ commentId แทน blogLikeId
+        const likedKey = 'liked_comment_' + id; // แยก key สำหรับ comment
+        const svgPath = btn.querySelector('svg path');
+
+        if (localStorage.getItem(likedKey)) {
+            svgPath.setAttribute('fill', 'currentColor'); // icon เต็ม
+            btn.style.color = 'red';
+        } else {
+            svgPath.setAttribute('fill', 'none'); // icon ว่าง
+            btn.style.color = 'gray';
         }
-        {% endfor %}
+    });
+
+    document.querySelectorAll("[data-blog-like-id]").forEach(btn => {
+        const id = btn.dataset.blogLikeId;
+        const likedKey = 'liked_blog_' + id;
+        const svgPath = btn.querySelector('svg path');
+
+        if (localStorage.getItem(likedKey)) {
+            svgPath.setAttribute('fill', 'currentColor'); // icon เต็ม
+            btn.style.color = 'red';
+        } else {
+            svgPath.setAttribute('fill', 'none');
+            btn.style.color = 'gray';
+        }
+    });
+
+    // ตรวจสอบ bookmark ของผู้ใช้
+    document.querySelectorAll("[data-blog-bookmark-id]").forEach(btn => {
+        const blogId = btn.dataset.blogBookmarkId;
+        const svgPath = btn.querySelector('svg path');
+        
+        {% if request.user.is_authenticated %}
+            {% for b in request.user.user.bookmarked_posts.all %}
+            if (blogId == '{{ b.blog_id }}') {
+                svgPath.setAttribute('fill', 'blue');
+                btn.style.color = 'blue';
+            } else {
+                svgPath.setAttribute('fill', 'none');
+                btn.style.color = 'gray';
+            }
+            {% endfor %}
         {% endif %}
     });
+
 });
+
+
+
 </script>
 
 
