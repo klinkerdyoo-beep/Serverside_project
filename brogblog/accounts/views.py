@@ -2,9 +2,15 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import logout, login
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
-# from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views import View
 from django.db import transaction
+
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from django.http import HttpRequest
+
 
 from .forms import *
 from .models import *
@@ -77,3 +83,12 @@ class LogoutView(View):
     def get(self, request):
         logout(request)
         return redirect('login')
+    
+class EditProfileView(LoginRequiredMixin, View):
+    login_url = settings.LOGIN_URL
+
+    def get(self, request: HttpRequest):
+        form = RegisterForm()
+        return render(request, 'edit_profile.html', {"form": form})
+    
+    # def post(self, request):

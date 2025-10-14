@@ -16,9 +16,6 @@ from accounts.models import User
 
 from .forms import CommentForm
 
-from django.contrib.auth import get_user_model
-
-
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpRequest

@@ -29,7 +29,10 @@
                 <div class="w-8 h-8 rounded-full bg-cover bg-center mr-3"
                     style='background-image: url("{% if blog.user.profile_path %}{{ blog.user.profile_path.url }}{% else %}{% static "img/no-img-user.png" %}{% endif %}");'>
                 </div>
-                <span>{{ blog.user.auth_user.username }}</span>
+                <div class="flex items-center gap-1 text-slate-500 dark:text-slate-400">
+                    <span class="material-symbols-outlined text-sm">ink_pen</span>
+                    <p class="text-sm">{{ blog.user.auth_user.username|truncatechars:10 }}</p>
+                </div>
                 <span class="mx-2">·</span>
                 <span>{{ blog.created_date }}</span>
             </div>
@@ -45,9 +48,23 @@
                         <span class="material-symbols-outlined text-base">chat_bubble</span>
                         <span class="text-xs font-medium">{{ blog.num_comments }}</span>
                     </div>
+                    <div class="flex items-center gap-1">
+                                <span class="material-symbols-outlined text-base">visibility</span>
+                                <span class="text-xs font-medium">{{ blog.views }}</span>
+                    </div>
                 </div>
-                <button class="text-primary hover:text-primary/80 transition-colors">
-                    <span class="material-symbols-outlined">bookmark</span>
+                <!-- Bookmark from blog-detail -->
+                <button 
+                    onclick="MarkBlog(this)" 
+                    data-blog-bookmark-id="{{ blog.blog_id }}"
+                    class="text-primary flex items-center gap-1 text-sm transition-colors flex-shrink-0"
+                    style="color: gray;"> <!-- สี text ปุ่มเริ่มต้นเป็น gray -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 5v16l7-5 7 5V5a2 2 0 00-2-2H7a2 2 0 00-2 2z"
+                            fill="none" /> <!-- fill เริ่มต้นเป็น none -->
+                    </svg>
+                    <span class="text-xs font-medium">{{ bookmark_count }}</span>
                 </button>
             </div>
         </div>

@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Edit Profile {% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto mt-10 p-8 bg-background-light dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-2xl shadow-md">
+    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">Edit Profile</h2>
+
+    <form method="POST" enctype="multipart/form-data" class="space-y-8">
+        {% csrf_token %}
+
+        <!-- Profile Image -->
+        <div class="flex items-center gap-6">
+            <div class="relative">
+                <img src="{% if user.profile_path %}{{ user.profile_path.url }}{% else %}{% static 'img/no-img-user.png' %}{% endif %}"
+                     alt="Profile image"
+                     class="w-24 h-24 rounded-full object-cover border border-slate-300 dark:border-slate-700">
+                <label for="id_profile_path"
+                       class="absolute bottom-0 right-0 bg-primary text-white rounded-full p-1.5 cursor-pointer hover:bg-primary/80 transition">
+                    <span class="material-symbols-outlined text-sm">edit</span>
+                </label>
+            </div>
+            <input type="file" id="id_profile_path" name="profile_path" class="hidden">
+            <div>
+                <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200">{{ user.auth_user.username }}</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Click icon to change your profile photo</p>
+            </div>
+        </div>
+
+        <!-- Username -->
+        <div>
+            <label for="id_username" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Username</label>
+            <input type="text" id="id_username" name="username" value="{{ user.auth_user.username }}"
+                   class="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-background-light dark:bg-background-dark text-slate-900 dark:text-white focus:ring-primary focus:border-primary transition">
+        </div>
+
+        <!-- Bio -->
+        <div>
+            <label for="id_bio" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Bio</label>
+            <textarea id="id_bio" name="bio" rows="4"
+                      class="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-background-light dark:bg-background-dark text-slate-900 dark:text-white focus:ring-primary focus:border-primary transition"
+                      placeholder="Write a few lines about yourself...">{{ user.bio }}</textarea>
+        </div>
+
+        <hr class="border-slate-200 dark:border-slate-700">
+
+        <!-- Password Reset -->
+        <div>
+            <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4">Change Password</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="id_current_password" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Current Password</label>
+                    <input type="password" id="id_current_password" name="current_password"
+                           class="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-background-light dark:bg-background-dark text-slate-900 dark:text-white focus:ring-primary focus:border-primary transition">
+                </div>
+                <div>
+                    <label for="id_new_password" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">New Password</label>
+                    <input type="password" id="id_new_password" name="new_password"
+                           class="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-background-light dark:bg-background-dark text-slate-900 dark:text-white focus:ring-primary focus:border-primary transition">
+                </div>
+                <div class="md:col-span-2">
+                    <label for="id_confirm_password" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Confirm New Password</label>
+                    <input type="password" id="id_confirm_password" name="confirm_password"
+                           class="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-background-light dark:bg-background-dark text-slate-900 dark:text-white focus:ring-primary focus:border-primary transition">
+                </div>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex justify-end gap-4">
+            <a href="{% url 'profile' user.id %}"
+               class="px-5 py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                Cancel
+            </a>
+            <button type="submit"
+                    class="px-6 py-2.5 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition">
+                Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
