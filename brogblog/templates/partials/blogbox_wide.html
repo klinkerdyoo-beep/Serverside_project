@@ -1,26 +1,101 @@
+{% load static %}
 {% for blog in blogs %}
-<div id="{{ blog.blog_id }}_blogbox" class="bg-background-light dark:bg-background-dark p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-    <div class="flex items-start gap-4">
-        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-24 flex-shrink-0" 
-        style='background-image: url("{% if blog.user.profile_path %}{{ blog.user.profile_path.url }}{% else %}{% static "img/no-img-user.png" %}{% endif %}");'>
-        </div>
-        <div class="flex-grow">
-            <p class="text-lg font-bold text-slate-900 dark:text-white mb-1 line-clamp-2">{{ blog.header }}</p>
-            <!-- <p class="text-sm text-slate-500 dark:text-slate-400 mb-3">Category</p> -->
-            <div class="flex items-center gap-4 text-slate-500 dark:text-slate-400">
-                <div class="flex items-center gap-1">
-                    <span class="material-symbols-outlined text-base">favorite</span>
-                    <span class="text-xs font-medium">{{ blog.likes }}</span>
-                </div>
-                <div class="flex items-center gap-1">
-                    <span class="material-symbols-outlined text-base">chat_bubble</span>
-                    <span class="text-xs font-medium">{{ blog.num_comments }}</span>
+<a href="{% url 'blog-detail' blog_id=blog.blog_id %}" >
+    <div id="{{ blog.blog_id }}_blogbox" 
+        class="bg-background-light dark:bg-background-dark p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+        
+        <div class="flex items-start justify-between gap-4">
+            
+            <div class="flex items-start gap-4 flex-grow">
+                {% with blog.blogimage_set.all.0 as first_image %}
+                    {% if first_image and first_image.image_path %}
+                        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-24 flex-shrink-0" 
+                            style="background-image: url('{{ first_image.image_path.url }}');">
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <div class="flex-grow">
+                    <p class="text-lg font-bold text-slate-900 dark:text-white mb-1 line-clamp-2">
+                        {{ blog.header }}
+                    </p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-3">
+                        {{ blog.body|truncatechars:100 }}
+                    </p>
+                    
+                    <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
+                        <div class="flex items-center gap-1 text-slate-500 dark:text-slate-400">
+                            <span class="material-symbols-outlined text-sm">ink_pen</span>
+                            <p class="text-sm">{{ blog.user.auth_user.username }}</p>
+                        </div>
+
+                        <div class="flex items-center gap-4 ml-auto">
+                            <div class="flex items-center gap-1">
+                                <span class="material-symbols-outlined text-base">favorite</span>
+                                <span class="text-xs font-medium">{{ blog.likes }}</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span class="material-symbols-outlined text-base">chat_bubble</span>
+                                <span class="text-xs font-medium">{{ blog.num_comments }}</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span class="material-symbols-outlined text-base">visibility</span>
+                                <span class="text-xs font-medium">{{ blog.views }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <!-- Bookmark from blog-detail -->
+            <button 
+                onclick="MarkBlog(this)" 
+                data-blog-bookmark-id="{{ blog.blog_id }}"
+                class="text-primary flex items-center gap-1 text-sm transition-colors flex-shrink-0"
+                style="color: gray;"> <!-- สี text ปุ่มเริ่มต้นเป็น gray -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M5 5v16l7-5 7 5V5a2 2 0 00-2-2H7a2 2 0 00-2 2z"
+                        fill="none" /> <!-- fill เริ่มต้นเป็น none -->
+                </svg>
+                <span class="text-xs font-medium">{{ bookmark_count }}</span>
+            </button>
         </div>
-        <button class="text-primary">
-            <span class="material-symbols-outlined">bookmark</span>
-        </button>
     </div>
-</div>
+</a>
 {% endfor %}
+
+<script>
+function MarkBlog(btn) {
+    const blogId = btn.dataset.blogBookmarkId; // แก้จาก btn.dataset.blogId
+    if (!blogId) return;
+
+    btn.disabled = true;
+
+    fetch(`/blog-bookmark/${blogId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+        },
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.bookmarked !== undefined) {
+            const svgPath = btn.querySelector('svg path');
+            const span = btn.querySelector('span');
+
+            if (data.bookmarked) {
+                svgPath.setAttribute('fill', 'blue');
+                btn.style.color = 'blue';
+            } else {
+                svgPath.setAttribute('fill', 'none');
+                btn.style.color = 'gray';
+            }
+
+            span.innerText = data.bookmark_count;
+        }
+    })
+    .finally(() => btn.disabled = false);
+}
+</script>

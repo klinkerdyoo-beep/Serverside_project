@@ -22,9 +22,6 @@ from reports.models import *
 
 from .forms import CommentForm
 
-from django.contrib.auth import get_user_model
-
-
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpRequest
@@ -134,6 +131,7 @@ class CreateBlogView(LoginRequiredMixin, PermissionRequiredMixin, View):
                     return redirect('home')
                 
                 else:
+                    print("raise error")
                     raise transaction.TransactionManagementError("Error")
         except Exception as e:
             print("exceptional", e)

@@ -2,10 +2,16 @@ from django.shortcuts import render, redirect,  get_object_or_404
 from django.contrib.auth import logout, login
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views import View
 from django.db import transaction
 from django.http import JsonResponse
+
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from django.http import HttpRequest
+
 
 from .forms import *
 from .models import *
@@ -82,6 +88,31 @@ class LogoutView(View):
         logout(request)
         return redirect('login')
     
+class EditProfileView(LoginRequiredMixin, View):
+    login_url = settings.LOGIN_URL
+
+    def get(self, request):
+        auth_user = request.user
+        try:
+            profile = User.objects.get(auth_user=auth_user)
+        except User.DoesNotExist:
+            print("not found user")
+            profile = None
+        form = EditProfileForm(instance=profile, auth_user_instance=auth_user)
+        return render(request, 'edit_profile.html', {"form": form})
+
+    def post(self, request):
+        auth_user = request.user
+        profile = User.objects.get(auth_user=auth_user)
+        form = EditProfileForm(request.POST, request.FILES, instance=profile, auth_user_instance=auth_user)
+        if form.is_valid():
+            form.save()
+            print("successfully editted")
+            
+            login(request, auth_user)
+            return redirect('home')
+        print("form not valid:", form.errors)
+        return render(request, 'edit_profile.html', {"form": form})
 class MyAccountView(LoginRequiredMixin, View):
     def get(self, request):
         # ดึง user ปัจจุบัน (custom user)
