@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Categories{% endblock %}
+
+{% block content %}
+<section class="mb-8 px-4 md:px-10">
+   <h2 class="text-xl font-semibold mb-4 text-slate-900 dark:text-white">Category: {{ category.name }}</h2>
+
+    <!-- Category Tabs -->
+    <div class="flex gap-3 mb-6">
+        <h2 class="ml-5 text-xl  mb-4 text-slate-900 dark:text-white">Tags: </h2>
+        <a href="{% url 'category-detail' category.name %}" 
+        class="px-3 py-1 rounded-full {% if not selected_tag_id %}bg-blue-200{% else %}bg-blue-100{% endif %}">
+            All
+        </a>
+        {% for t in tags %}
+        <a href="{% url 'category-detail-tag' category.name t.tag_id %}" 
+           class="px-3 py-1 rounded-full {% if selected_tag_id == t.id %}bg-blue-200{% else %}bg-blue-100{% endif %}">
+           #{{ t.name }}
+        </a>
+        {% endfor %}
+    </div>
+
+        <!-- Blogs list -->
+        {% if blogs %}
+        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3 px-4 md:px-10">
+            {% for blog in blogs %}
+                {% include "partials/blogbox_big.html" with blog=blog %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-center text-slate-500 dark:text-slate-400 mt-10">No posts found for this category/tag.</p>
+        {% endif %}
+ </section>
+{% endblock %}

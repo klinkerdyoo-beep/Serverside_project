@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,  get_object_or_404
 from django.contrib.auth import logout, login
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
@@ -6,6 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views import View
 from django.db import transaction
+from django.http import JsonResponse
 
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
@@ -14,6 +15,9 @@ from django.http import HttpRequest
 
 from .forms import *
 from .models import *
+from blogs.models import *
+from tags.models import *
+from accounts.models import User
 
 class LoginView(View):
     def get(self, request):
@@ -109,3 +113,34 @@ class EditProfileView(LoginRequiredMixin, View):
             return redirect('home')
         print("form not valid:", form.errors)
         return render(request, 'edit_profile.html', {"form": form})
+class MyAccountView(LoginRequiredMixin, View):
+    def get(self, request):
+        # ดึง user ปัจจุบัน (custom user)
+        user = request.user.user  
+
+        # Blog ที่ user สร้างเอง
+        user_blogs = Blog.objects.filter(user=user).order_by('-created_date')
+
+        # Blog ที่ user bookmark ไว้
+        bookmarked_blogs = user.bookmarked_posts.all().order_by('-created_date')
+
+        # ความคิดเห็นทั้งหมดที่ user เคยเขียน
+        user_comments = Comment.objects.filter(user=user).select_related('blog').order_by('-created_date')
+
+        # Blog ที่ user เคยดู (ถ้ามีการเก็บใน model เช่น BlogViewHistory)
+        # ถ้ายังไม่มี model นั้น สามารถละส่วนนี้ไว้ก่อนได้
+        try:
+            from blogs.models import BlogViewHistory
+            viewed_blogs = BlogViewHistory.objects.filter(user=user).select_related('blog').order_by('-viewed_at')
+        except:
+            viewed_blogs = []
+
+        context = {
+            'user': user,
+            'user_blogs': user_blogs,
+            'bookmarked_blogs': bookmarked_blogs,
+            'user_comments': user_comments,
+            'viewed_blogs': viewed_blogs,
+        }
+
+        return render(request, "my_account.html", context)

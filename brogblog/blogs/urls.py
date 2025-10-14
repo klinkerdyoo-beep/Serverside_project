@@ -11,5 +11,8 @@ urlpatterns = [
     path('blog-like/<int:blog_id>/', views.BlogLikeView.as_view(), name='blog-like'),
     path('comment-like/<int:comment_id>/', views.CommentLikeView.as_view(), name='comment-like'),
     path('blog-bookmark/<int:blog_id>/', views.BlogBookmarkToggleView.as_view(), name='blog-bookmark'),
-    # path('category/<str:name>/', views.CategoryDetailView.as_view(), name='category_detail'),
+    path("report/<int:blog_id>/", views.ReportBlogView.as_view(), name="report_blog"),
+    path("delete-blog/<int:blog_id>/", views.DeleteBlogView.as_view(), name="delete-blog"),
+    path('category-detail/<str:name>/', views.CategoryDetailView.as_view(), name='category-detail'),
+    path('category-detail/<str:name>/<int:tag_id>/',  views.CategoryDetailView.as_view(), name='category-detail-tag'),
 ]
