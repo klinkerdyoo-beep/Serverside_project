@@ -87,8 +87,25 @@ class LogoutView(View):
 class EditProfileView(LoginRequiredMixin, View):
     login_url = settings.LOGIN_URL
 
-    def get(self, request: HttpRequest):
-        form = RegisterForm()
+    def get(self, request):
+        auth_user = request.user
+        try:
+            profile = User.objects.get(auth_user=auth_user)
+        except User.DoesNotExist:
+            print("not found user")
+            profile = None
+        form = EditProfileForm(instance=profile, auth_user_instance=auth_user)
         return render(request, 'edit_profile.html', {"form": form})
-    
-    # def post(self, request):
+
+    def post(self, request):
+        auth_user = request.user
+        profile = User.objects.get(auth_user=auth_user)
+        form = EditProfileForm(request.POST, request.FILES, instance=profile, auth_user_instance=auth_user)
+        if form.is_valid():
+            form.save()
+            print("successfully editted")
+            
+            login(request, auth_user)
+            return redirect('home')
+        print("form not valid:", form.errors)
+        return render(request, 'edit_profile.html', {"form": form})

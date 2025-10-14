@@ -116,6 +116,7 @@ class CreateBlogView(LoginRequiredMixin, PermissionRequiredMixin, View):
                     return redirect('home')
                 
                 else:
+                    print("raise error")
                     raise transaction.TransactionManagementError("Error")
         except Exception as e:
             print("exceptional", e)

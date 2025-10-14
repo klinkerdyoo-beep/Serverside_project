@@ -2,3 +2,4 @@
 FIELD_INPUT_CLASSES = "font-thai w-full px-4 py-2 bg-background-light dark:bg-background-dark border border-gray-300 dark:border-gray-600 rounded-md focus:ring-primary focus:border-primary text-text-light dark:text-text-dark"
 FIELD_WIDE_INPUT_CLASSES = "w-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-md p-3 focus:ring-primary focus:border-primary placeholder-text-secondary-light dark:placeholder-text-secondary-dark"
 FIELD_TEXTAREA_CLASSES = "w-full p-3 bg-background-white dark:bg-background-dark border border-gray-300 dark:border-gray-600 rounded-md focus:ring-0 placeholder-text-secondary-light dark:placeholder-text-secondary-dark"
+FIELD_LONG_INPUT_CLASSES = "w-full min-w-[500px] bg-background-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-md p-3"
