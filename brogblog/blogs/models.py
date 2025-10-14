@@ -18,7 +18,7 @@ class Blog(models.Model):
     )
     blogstatus = models.ForeignKey(BlogStatus, on_delete=models.CASCADE)
     header = models.CharField(max_length=200, null=False)
-    body = models.TextField(null=False)
+    body = models.TextField(blank=True, null=True)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     views = models.IntegerField(default=0)
