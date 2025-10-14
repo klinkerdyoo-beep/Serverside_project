@@ -138,6 +138,7 @@ class BlogDetailView(View):
         tags2 = Tag.objects.filter(blogtag__blog=blog)
         categories2 = Category.objects.filter(tag__in=tags2).distinct()
 
+
         bookmarked = False
         if request.user.is_authenticated:
             user = request.user.user  # custom User
