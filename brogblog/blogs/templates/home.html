@@ -4,20 +4,18 @@
 {% block title %} Home {% endblock %}
 {% block content %}
                 <section class="mb-8">
-                    <h2 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white">Categories</h2>
-                    <div class="relative">
-                    <div class="flex items-center gap-3 overflow-x-auto pb-4 no-scrollbar" id="categories-container">
-                    <button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #e0f2fe; --category-text-color: #0c4a6e; --category-dark-bg-color: #1e3a8a; --category-dark-text-color: #dbeafe;">Technology</button>
-                    <button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #e0f7fa; --category-text-color: #164e63; --category-dark-bg-color: #164e63; --category-dark-text-color: #e0f7fa;">Travel</button>
-                    <button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #fef3c7; --category-text-color: #78350f; --category-dark-bg-color: #78350f; --category-dark-text-color: #fef3c7;">Food</button>
-                    <button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #dcfce7; --category-text-color: #166534; --category-dark-bg-color: #166534; --category-dark-text-color: #dcfce7;">Health</button>
-                    <button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #fce7f3; --category-text-color: #831843; --category-dark-bg-color: #831843; --category-dark-text-color: #fce7f3;">Lifestyle</button>
-                    <button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #e5e7eb; --category-text-color: #374151; --category-dark-bg-color: #374151; --category-dark-text-color: #e5e7eb;">Finance</button>
-                    <button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #ede9fe; --category-text-color: #5b21b6; --category-dark-bg-color: #5b21b6; --category-dark-text-color: #ede9fe;">Education</button>
-                    <button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #fee2e2; --category-text-color: #991b1b; --category-dark-bg-color: #991b1b; --category-dark-text-color: #fee2e2;">Art</button>
-                    <button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #dbeafe; --category-text-color: #1e40af; --category-dark-bg-color: #1e40af; --category-dark-text-color: #dbeafe;">Science</button>
-                    <button class="category-btn dark:category-btn-dark flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full" style="--category-bg-color: #fae8ff; --category-text-color: #701a75; --category-dark-bg-color: #701a75; --category-dark-text-color: #fae8ff;">Sports</button>
-                    </div>
+                    <!-- Categories -->
+                    <h2 class="text-lg font-semibold mb-2">Categories</h2>
+                    <div class="overflow-x-auto no-scrollbar mb-6">
+                        <div class="flex gap-3">
+                            {% for c in categories %}
+                            <button class="flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full
+                                        bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200
+                                        hover:bg-blue-200 dark:hover:bg-blue-800 transition">
+                                {{ c.name }}
+                            </button>
+                            {% endfor %}
+                        </div>
                     </div>
                 </section>
                 <div class="border-b border-slate-200 dark:border-slate-800 mb-6 flex justify-center">

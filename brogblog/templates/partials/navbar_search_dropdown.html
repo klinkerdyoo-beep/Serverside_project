@@ -1,0 +1,54 @@
+<div 
+  x-show="open"
+  x-transition
+  @click.away="open = false"
+  class="absolute mt-1 w-full bg-white dark:bg-slate-800 rounded shadow-lg z-50 max-h-60 overflow-auto"
+>
+  {% if not search_query %}
+    <p class="p-2 text-gray-500 text-sm italic">พิมพ์เพื่อค้นหา...</p>
+  {% else %}
+    {% if categories or blogs or tags %}
+      {% if categories %}
+        <div class="p-2 border-b border-gray-200 dark:border-gray-700">
+          <h4 class="text-sm font-bold text-gray-700 dark:text-gray-200">Categories</h4>
+          {% for category in categories %}
+            <a href="#"
+               class="block px-2 py-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded"
+               @click="open = false">
+              {{ category.name }}
+            </a>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if tags %}
+      <div class="p-2">
+        <h4 class="text-sm font-bold text-gray-700 dark:text-gray-200">Tags</h4>
+        {% for tag in tags %}
+            <a href="#" 
+               class="block px-2 py-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded"
+               @click="open = false">
+              {{ tag.name }}
+            </a>
+        {%endfor%}
+      </div>
+      {% endif %}
+
+      {% if blogs %}
+        <div class="p-2">
+          <h4 class="text-sm font-bold text-gray-700 dark:text-gray-200">Blogs</h4>
+          {% for blog in blogs %}
+            <a href="{% url 'blog-detail' blog_id=blog.blog_id %}" 
+               class="block px-2 py-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded"
+               @click="open = false">
+              {{ blog.header }}
+            </a>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+    {% else %}
+      <p class="p-2 text-gray-500 text-sm italic">ไม่พบผลลัพธ์</p>
+    {% endif %}
+  {% endif %}
+</div>

@@ -1,0 +1,22 @@
+<div class="relative flex-1 mx-4">
+  <form method="GET" action="" class="flex">
+    <input 
+      name="search"
+      value="{{ search_query }}"
+      placeholder="Search..."
+      class="flex-1 rounded-l border px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary"
+      autocomplete="off"
+    >
+    <button 
+        type="submit" 
+        class="bg-primary hover:bg-blue-400 text-white px-4 rounded-r-lg flex items-center justify-center transition-colors duration-200">
+            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+                <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
+            </svg>
+    </button>
+  </form>
+
+  {% if search_query %}
+    {% include 'partials/navbar_search_dropdown.html' %}
+  {% endif %}
+</div>

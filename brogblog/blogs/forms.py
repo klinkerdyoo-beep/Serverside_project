@@ -1,10 +1,13 @@
 from django import forms
-from django.forms import ModelForm, ValidationError, FileInput
+from django.forms import ModelForm, ValidationError, FileInput, SplitDateTimeField
 from .models import *
 from tags.models import Category, Tag
 from django.contrib.auth.models import User as AuthUser
-from utils.tailwinds import *
 
+from django.forms.widgets import Textarea, TextInput, SplitDateTimeWidget
+from django.core.exceptions import ValidationError
+
+from utils.tailwinds import *
 
 class BlogForm(forms.ModelForm):
     tags = forms.CharField(
@@ -92,3 +95,10 @@ class BlogImageForm(forms.ModelForm):
             # "image_path": FileInput(),
             "image_path": FileInput(attrs={"class": "hidden"}),
         }
+
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = [
+            "comment_text",
+        ]
