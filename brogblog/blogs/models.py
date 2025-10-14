@@ -32,7 +32,7 @@ class Blog(models.Model):
 class BlogImage(models.Model):
     blogimage_id = models.AutoField(primary_key=True)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
-    image_path = models.TextField()
+    image_path = models.FileField(upload_to='image_post/', blank=True, null=True)
 
 
 class BlogExpiration(models.Model):

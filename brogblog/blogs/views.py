@@ -33,6 +33,8 @@ class CreateBlogView(LoginRequiredMixin, PermissionRequiredMixin, View):
     def get(self, request: HttpRequest):
         blogform = BlogForm()
         imgform = BlogImageForm()
+        catform = CategoryForm()
+
         blog_status = BlogStatus.objects.all()
         cat_list = Category.objects.all()
         context = {
@@ -40,17 +42,19 @@ class CreateBlogView(LoginRequiredMixin, PermissionRequiredMixin, View):
             "category": cat_list,
             "blogform": blogform,
             "imgform": imgform,
+            "catform": catform,
         }
         return render(request, "create_blog.html", context)
     
     def post(self, request):
         blogform = BlogForm(request.POST)
+        catform = CategoryForm(request.POST)
         imgform = BlogImageForm(request.POST, request.FILES)
         action = request.POST.get('action')
         blog_user = User.objects.get(auth_user=request.user)
         try:
             with transaction.atomic():
-                if blogform.is_valid() and imgform.is_valid():
+                if blogform.is_valid() and imgform.is_valid() and catform.is_valid():
 
                     blog = blogform.save(commit=False)
                     blog.user = blog_user
@@ -66,19 +70,27 @@ class CreateBlogView(LoginRequiredMixin, PermissionRequiredMixin, View):
                     blogimg.blog = blog
                     blogimg.save()
 
+                    category = catform.cleaned_data.get('category')
+                    cat_name = category.name.strip() if category else None
+                    print(cat_name)
+
                     tag_names = blogform.cleaned_data.get('tags', [])
-                    if blog.category and blog.category.name:
-                        cat_name = blog.category.name.strip()
-                        if cat_name and cat_name not in tag_names:
-                            tag_names.append(cat_name)
+                    if cat_name and cat_name not in tag_names:
+                        tag_names.append(cat_name)
 
                     for name in tag_names:
-                        if name:
-                            tag, created = Tag.objects.get_or_create(
-                                name=name,
-                                defaults={'category': blog.category}
-                            )
-                            BlogTag.objects.get_or_create(blog=blog, tag=tag)
+                        if not name:
+                            continue
+                        tag, created = Tag.objects.get_or_create(
+                            name=name,
+                            defaults={'category': category}
+                        )
+                        if tag.category is None and category:
+                            tag.category = category
+                            tag.save()
+
+                        BlogTag.objects.get_or_create(blog=blog, tag=tag)
+                    print("sucessfully posted")
                     return redirect('home')
                 
                 else:
@@ -88,5 +100,6 @@ class CreateBlogView(LoginRequiredMixin, PermissionRequiredMixin, View):
             return render(request, "create_blog.html", {
                 "blogform": blogform,
                 "imgform": imgform,
+                "catform": catform,
             })
     

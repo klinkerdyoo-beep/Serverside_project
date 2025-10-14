@@ -71,6 +71,18 @@ class BlogForm(forms.ModelForm):
             blog.save()
         return blog
 
+class CategoryForm(forms.ModelForm):
+    category = forms.ModelChoiceField(
+        queryset=Category.objects.all(),
+        widget=forms.Select(attrs={
+            "class": "flex items-center space-x-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/50 text-primary dark:text-blue-300 rounded-full"
+        }),
+        required=False
+    )
+    class Meta:
+        model = Category
+        fields = ['category']
+
 
 class BlogImageForm(forms.ModelForm):
     class Meta:
