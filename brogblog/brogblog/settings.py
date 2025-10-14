@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'blogs',
     'tags',
     'reports',
-    'utils'
+    'utils',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -104,7 +105,7 @@ WSGI_APPLICATION = 'brogblog.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://neondb_owner:npg_MkjY5ALoxa1R@ep-calm-wind-ad0v5v3d-pooler.c-2.us-east-1.aws.neon.tech/neondb',
+         default='postgresql://neondb_owner:npg_Dy0UVnH2arcL@ep-young-sea-a1g8hlqf-pooler.ap-southeast-1.aws.neon.tech/neondb',
         conn_max_age=600,
         ssl_require=True,
     )

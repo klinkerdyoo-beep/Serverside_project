@@ -9,11 +9,12 @@
                     <div class="overflow-x-auto no-scrollbar mb-6">
                         <div class="flex gap-3">
                             {% for c in categories %}
-                            <button class="flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full
-                                        bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200
-                                        hover:bg-blue-200 dark:hover:bg-blue-800 transition">
+                            <a href="{% url 'category-detail' c.name %}" 
+                            class="flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full
+                                    bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200
+                                    hover:bg-blue-200 dark:hover:bg-blue-800 transition">
                                 {{ c.name }}
-                            </button>
+                            </a>
                             {% endfor %}
                         </div>
                     </div>

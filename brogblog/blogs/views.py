@@ -6,13 +6,19 @@ from django.db.models.functions import Concat
 from django.http import JsonResponse
 import json
 
+from django.contrib import messages
+
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+
+from rest_framework.response import Response
+from rest_framework import status
 
 from .models import *
 from blogs.models import *
 from tags.models import *
 from accounts.models import User
+from reports.models import *
 
 from .forms import CommentForm
 
@@ -34,6 +40,15 @@ from .models import *
 from tags.models import *
 from blogs.forms import *
 from accounts.models import *
+
+from django.utils import timezone
+from datetime import timedelta
+
+
+def is_my_blog(user, author):
+    if user == author:
+        return True
+    return False
 
 
 class HomeView(View):
@@ -157,10 +172,10 @@ class BlogDetailView(View):
 
          # ฟอร์มคอมเมนต์เปล่า (สำหรับแสดงในหน้า)
         comment_form = CommentForm()
-        # ส่ง blog เข้า template
+
         context = {
             'blog': blog,
-            'user': blog.user,
+            'users': blog.user,
             'comments' : comments,
             'categories' : categories,
             'tags2' : tags2,
@@ -173,7 +188,7 @@ class BlogDetailView(View):
         return render(request, "blog-detail.html", context)
     
     def post(self, request, blog_id):
-         # ดึง blog ที่กำลังดูอยู่
+
         blog = get_object_or_404(Blog, pk=blog_id)
         parent_id = request.POST.get("parent_id")
 
@@ -208,7 +223,7 @@ class BlogLikeView(View):
         data = json.loads(request.body.decode('utf-8'))
         action = data.get('action')
         
-        # อัปเดต likes
+        
         if action == 'like':
             blog.likes += 1
         elif action == 'unlike' and blog.likes > 0:
@@ -262,11 +277,65 @@ class BlogBookmarkToggleView(View):
             'bookmarked': bookmarked,
             'bookmark_count': blog.bookmarked_by.count()
         })
+    
+class ReportBlogView(View):
+    def post(self, request, blog_id):
+        # ตรวจว่า blog มีอยู่จริง
+        blog = get_object_or_404(Blog, pk=blog_id)
 
-# class CategoryDetailView(View):
+        # ดึงค่าจาก POST
+        reason = request.POST.get('reason', '').strip()
+        if not reason:
+            return JsonResponse({'error': 'Please provide a reason.'}, status=400)
 
-#     def get(self, request, name):  # ต้องมี self
-#         category = get_object_or_404(Category, name=name)
-#         # ดึง post ที่เกี่ยวข้องกับ category
-#         posts = category.blog_set.all()  # สมมติ relation เป็น blog_set
-#         return render(request, 'category_detail.html', {'category': category, 'posts': posts})
+        # แปลง request.user เป็น accounts.User instance
+        reporter = User.objects.get(auth_user=request.user)
+
+        # สร้าง ReportBlog
+        ReportBlog.objects.create(
+            reporter=reporter,
+            blog=blog,
+            reason=reason,
+            # status เป็น default 'pending', handled_by เป็น null
+        )
+
+        return JsonResponse({'success': 'Reported successfully'})
+
+class DeleteBlogView(LoginRequiredMixin, View):
+    
+    login_url = '/authen/login/'
+    
+    def get(self, request: HttpRequest, blog_id):
+        blog = get_object_or_404(Blog, pk=blog_id)
+
+        print("Logged-in user:", request.user)
+        print("Blog owner auth_user:", blog.user.auth_user)
+        
+        if blog.user.auth_user != request.user:
+            raise PermissionDenied("Only for the blog owner.")
+        
+
+        blog.delete()
+        return redirect('home')
+    
+
+class CategoryDetailView(View):
+
+    def get(self, request, name, tag_id=None):
+        category = get_object_or_404(Category, name=name)
+        tags = Tag.objects.filter(category = category)
+        if tag_id:
+            # ถ้าเลือก tag เฉพาะ
+            blogtags = BlogTag.objects.filter(tag_id=tag_id)
+            blogs = [bt.blog for bt in blogtags]
+        else:
+            # แสดงทุก blog ของ category
+            blogtags = BlogTag.objects.filter(tag__category=category)
+            blogs = list({bt.blog for bt in blogtags})  # set เพื่อไม่ให้ซ้ำ
+
+        return render(request, 'category_detail.html', {
+            'category': category,
+            'tags': tags,
+            'blogs': blogs,
+            'selected_tag_id': tag_id
+        })

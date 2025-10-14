@@ -32,17 +32,44 @@
                                 invisible group-hover:visible
                                 transition-all duration-200 z-10">
                         <a href="{% url 'home' %}" class="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700">Translate</a>
-                        <a href="#" onclick="openReportModal()" class="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700">
+                        <a href="#" onclick="openReportModal({{ blog.blog_id }})" class="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700">
                         Report
                         </a>              
 
                         <a href="{% url 'home' %}" class="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700">Edit</a>
-                        <a href="{% url 'home' %}" class="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700">Delete</a>
+                        {% if user.is_authenticated and blog.user.auth_user == user %}
+                            <a href="{% url 'delete-blog' blog.blog_id %}" class="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700">Delete</a>
+                        {% endif %}
+                        <!-- for test user -->
+                        <!-- <p class="text-red">{{blog.user.auth_user.username}}</p>
+                        <p class="text-red">{{user}}</p> -->
                     </div>
                 </div>
                         <!-- มี Translate,report,edit,delete -->
 
                     </div>
+
+                <!-- Report Modal -->
+                <div id="reportModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+                <div class="bg-white dark:bg-slate-800 rounded-lg p-6 w-96 shadow-lg">
+                    <h2 class="text-xl font-semibold mb-4 text-center text-red-500">Report this post</h2>
+                    <form id="reportForm">
+                    <textarea name="reason" id="reportReason" 
+                                class="w-full border rounded-lg p-2 mb-4 focus:ring focus:ring-red-300 dark:bg-slate-700 dark:text-white"
+                                rows="3" placeholder="Write your reason..."></textarea>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" onclick="closeReportModal()" 
+                                class="px-3 py-1 rounded bg-gray-300 hover:bg-gray-400 dark:bg-slate-600 dark:hover:bg-slate-500">
+                        Cancel
+                        </button>
+                        <button type="submit" 
+                                class="px-3 py-1 rounded bg-red-500 hover:bg-red-600 text-white">
+                        Submit
+                        </button>
+                    </div>
+                    </form>
+                </div>
+                </div>
 
 
 
@@ -84,7 +111,7 @@
                         <!-- Image -->
                         {% with blog.blogimage_set.all.0 as first_image %}
                             {% if first_image and first_image.image_path %}
-                                <div class="w-full h-64 md:h-96 bg-cover bg-center rounded-lg mb-4" 
+                                <div class="w-full h-full md:h-96 bg-cover bg-center rounded-lg mb-4" 
                                     style="background-image: url('{{ first_image.image_path.url }}');">
                                 </div>
                             {% endif %}
@@ -229,7 +256,7 @@
 
                                 <!-- Reply Form -->
                                 <div class="mt-2">
-                                    <form method="post" action="{% url 'blog-detail' blog.blog_id %}">
+                                    <form method="post" action="{% url 'delete-blog' blog.blog_id %}">
                                         {% csrf_token %}
                                         <div class="flex gap-3 items-center">
                                             <!-- Input ข้อความ reply -->
@@ -489,7 +516,45 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 
+let currentBlogId = null;
 
+function openReportModal(blogId) {
+    currentBlogId = blogId;
+    document.getElementById('reportModal').classList.remove('hidden');
+}
+
+function closeReportModal() {
+    document.getElementById('reportModal').classList.add('hidden');
+}
+
+// Submit report
+document.getElementById('reportForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const reason = document.getElementById('reportReason').value.trim();
+    if (!reason) {
+        alert("Please provide a reason.");
+        return;
+    }
+
+    fetch(`/report/${currentBlogId}/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": "{{ csrf_token }}",
+        },
+        body: new URLSearchParams({ reason })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.success);
+            closeReportModal();
+        } else {
+            alert(data.error || "Something went wrong.");
+        }
+    })
+    .catch(err => alert("Error: " + err));
+});
 
 </script>
 
