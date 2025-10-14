@@ -1,4 +1,6 @@
 {% load static %}
+{% load blog_tags %}
+
 <!-- Alpine.js for dropdown -->
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
@@ -14,58 +16,34 @@
         <span>BrogBlog</span>
       </a>
 
-      <a href="{% url 'home' %}" class="px-3 py-1 rounded bg-primary text-white hover:bg-primary-dark transition-colors">
+      <a href="{% url 'create-blog' %}" class="px-3 py-1 rounded bg-primary text-white hover:bg-primary-dark transition-colors">
         Create Blog
       </a>
     </div>
 
-<div aria-label="Filter content" class="flex-1 mx-4">
-  <form method="get" action="{% url 'home' %}">
-    <input 
-      class="w-full rounded border px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary"
-      id="search" 
-      type="text" 
-      name="search"
-      placeholder="Search..." 
-      value="{{ request.GET.search }}" 
-      autocomplete="off"
-      title="Filter data" />
-  </form>
-</div>
+  <div  class="flex-1 mx-4">
+    {% navbar_search %}
+  </div>
 
     <!-- Navbar links -->
     <div class="hidden md:flex items-center gap-4">
-      
-    <!-- Categories Dropdown -->
-    <div x-data="{ open: false }" class="relative z-40">
-      <!-- Button -->
-      <button @click="open = !open" 
-              class="text-sm font-medium bg-cover bg-center cursor-pointer dark:text-slate-300 hover:text-primary focus:outline-none">
-          Categories
-      </button>
 
-      <!-- Dropdown Menu -->
-      <div x-show="open" @click.away="open = false"
-          x-transition
-          class="absolute right-0 mt-2 w-64 max-h-60 bg-white dark:bg-slate-800 rounded-lg shadow-lg overflow-auto p-3 z-50 grid grid-cols-2 gap-2 sm:grid-cols-3">
+      <div x-data="{ open: false }" class="relative z-40">
+          <button @click="open = !open"
+                  class="text-sm font-medium dark:text-slate-300 hover:text-primary focus:outline-none">
+              Categories
+          </button>
 
-          {% for category in categories %}
-          <a href="#"
-            class="flex items-center justify-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-slate-700 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-600 max-h-max transition">
-            {{ category.name }}
-          </a>
-          {% endfor %}
-      </div>
+          <div x-show="open" @click.away="open = false"
+              x-transition
+              class="absolute right-0 mt-2 w-64 max-h-60 bg-white dark:bg-slate-800 rounded-lg shadow-lg overflow-auto p-3 z-50 grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {% navbar_categories %}
+        </div>
     </div>
+
 
     <!-- Right: Actions -->
     <div class="flex items-center gap-4">
-      <!-- Search Icon -->
-      <button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
-        <svg class="text-slate-700 dark:text-slate-300" fill="currentColor" height="20px" viewBox="0 0 256 256" width="20px" xmlns="http://www.w3.org/2000/svg">
-          <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
-        </svg>
-      </button>
 
       <!-- Dark Mode Icon -->
       <!-- <button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">

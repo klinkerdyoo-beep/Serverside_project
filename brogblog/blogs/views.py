@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect,  get_object_or_404
 from django.views import View
+from django.views.generic import DetailView
 from django.db.models import Count, Value
 from django.db.models.functions import Concat
 from django.http import JsonResponse
@@ -30,11 +31,20 @@ from django.db import transaction
 from brogblog.settings import LOGIN_URL
 
 class HomeView(View):
-    # permission_required = ["blogs.view_blog"]
-    # login_url = '/authen/login/'
+    def get(self, request):
+        # search_query = request.GET.get('search', '').strip()
+        # categories = Category.objects.filter(name__icontains=search_query) if search_query else []
+        # blogs = Blog.objects.filter(header__icontains=search_query) if search_query else []
+        categories = Category.objects.all()
 
-    def get(self, request: HttpRequest):
-        return render(request, "home.html")
+        
+        context = {
+            'categories': categories,
+            # 'blogs': blogs,
+            # 'search_query': search_query,
+        }
+        return render(request, 'home.html', context)
+    
 class CreateBlogView(View):
     permission_required = ["blogs.add_blog"]
     login_url = LOGIN_URL
@@ -175,3 +185,11 @@ class BlogBookmarkToggleView(View):
             'bookmarked': bookmarked,
             'bookmark_count': blog.bookmarked_by.count()
         })
+
+# class CategoryDetailView(View):
+
+#     def get(self, request, name):  # ต้องมี self
+#         category = get_object_or_404(Category, name=name)
+#         # ดึง post ที่เกี่ยวข้องกับ category
+#         posts = category.blog_set.all()  # สมมติ relation เป็น blog_set
+#         return render(request, 'category_detail.html', {'category': category, 'posts': posts})
