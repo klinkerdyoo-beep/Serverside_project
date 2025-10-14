@@ -5,6 +5,7 @@
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
   <div class="flex items-center justify-between h-16">
     <!-- Left: Logo -->
+<!-- Logo + Create Blog -->
     <div class="flex items-center gap-4">
       <a class="flex items-center gap-2 text-xl font-bold text-slate-900 dark:text-white" href="{% url 'home' %}">
         <svg class="h-6 w-6 text-primary" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -12,14 +13,50 @@
         </svg>
         <span>BrogBlog</span>
       </a>
+
+      <a href="{% url 'home' %}" class="px-3 py-1 rounded bg-primary text-white hover:bg-primary-dark transition-colors">
+        Create Blog
+      </a>
     </div>
 
-    <!-- Center: Nav Links -->
-    <nav class="hidden md:flex items-center gap-8">
-      <a class="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors" href="{% url 'home' %}">Home</a>
-      <a class="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Categories</a>
-      <a class="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Profile</a>
-    </nav>
+<div aria-label="Filter content" class="flex-1 mx-4">
+  <form method="get" action="{% url 'home' %}">
+    <input 
+      class="w-full rounded border px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary"
+      id="search" 
+      type="text" 
+      name="search"
+      placeholder="Search..." 
+      value="{{ request.GET.search }}" 
+      autocomplete="off"
+      title="Filter data" />
+  </form>
+</div>
+
+    <!-- Navbar links -->
+    <div class="hidden md:flex items-center gap-4">
+      
+    <!-- Categories Dropdown -->
+    <div x-data="{ open: false }" class="relative z-40">
+      <!-- Button -->
+      <button @click="open = !open" 
+              class="text-sm font-medium bg-cover bg-center cursor-pointer dark:text-slate-300 hover:text-primary focus:outline-none">
+          Categories
+      </button>
+
+      <!-- Dropdown Menu -->
+      <div x-show="open" @click.away="open = false"
+          x-transition
+          class="absolute right-0 mt-2 w-64 max-h-60 bg-white dark:bg-slate-800 rounded-lg shadow-lg overflow-auto p-3 z-50 grid grid-cols-2 gap-2 sm:grid-cols-3">
+
+          {% for category in categories %}
+          <a href="#"
+            class="flex items-center justify-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-slate-700 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-600 max-h-max transition">
+            {{ category.name }}
+          </a>
+          {% endfor %}
+      </div>
+    </div>
 
     <!-- Right: Actions -->
     <div class="flex items-center gap-4">
@@ -31,11 +68,11 @@
       </button>
 
       <!-- Dark Mode Icon -->
-      <button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+      <!-- <button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
         <svg class="text-slate-700 dark:text-slate-300" fill="currentColor" height="20px" viewBox="0 0 256 256" width="20px" xmlns="http://www.w3.org/2000/svg">
           <path d="M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z"></path>
         </svg>
-      </button>
+      </button> -->
 
       <!-- Profile Dropdown -->
       {% if request.user.is_authenticated %}

@@ -1,0 +1,468 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Home {% endblock %}
+{% block content %}
+                <section class="mb-8">
+                    <h2 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white">Block detail</h2>
+
+                </section>
+                <div class=" bg-white rounded-lg shadow-md max-h-max py-5">
+                        <div class="flex flex-row gap-3 border-b mb-5 bg-white p-5">
+                        <!-- Author -->
+                        <div class="flex flex-1 items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-full bg-cover bg-center border-2 border-slate-300"
+                                    style="background-image: url('{% if blog.user.profile_path %}{{ blog.user.profile_path.url }}{% else %}{% static 'no-image.png' %}{% endif %}');">
+                                </div>
+                            <div>
+                                <span class="font-semibold text-slate-800 dark:text-slate-200">{{blog.user.auth_user.username}}</span>
+                                <p>{{blog.created_date}}</p>
+                            </div>
+                        </div>
+            <!-- Profile Dropdown -->
+                <div class="relative group">
+                    <!-- Avatar -->
+                    <div class="w-10 h-10 rounded-full bg-cover bg-center cursor-pointer">
+                        ...
+                    </div>
+
+                    <!-- Dropdown Menu -->
+                    <div class="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-800 rounded shadow-lg
+                                opacity-0 group-hover:opacity-100
+                                invisible group-hover:visible
+                                transition-all duration-200 z-10">
+                        <a href="{% url 'home' %}" class="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700">Translate</a>
+                        <a href="#" onclick="openReportModal()" class="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700">
+                        Report
+                        </a>              
+
+                        <a href="{% url 'home' %}" class="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700">Edit</a>
+                        <a href="{% url 'home' %}" class="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700">Delete</a>
+                    </div>
+                </div>
+                        <!-- มี Translate,report,edit,delete -->
+
+                    </div>
+
+
+
+                    <div class="px-10 py-6 bg-white dark:bg-slate-900  mb-8">
+                        <!-- Title -->
+                        <h1 class="text-3xl font-bold mb-4 text-slate-900 dark:text-white">{{ blog.header }}</h1>
+                        
+                    <!-- Categories -->
+                    <h2 class="text-lg font-semibold mb-2">Categories</h2>
+                    <div class="overflow-x-auto no-scrollbar mb-6">
+                        <div class="flex gap-3">
+                            {% for c in categories2 %}
+                            <button class="flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full
+                                        bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200
+                                        hover:bg-blue-200 dark:hover:bg-blue-800 transition">
+                                {{ c.name }}
+                            </button>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- สำหรับเช็ค category -->
+                    <!-- <p class="text-sm text-red-500 mb-6">Categories: {{ categories2 }}</p> -->
+
+                    <!-- Tags -->
+                    <h2 class="text-lg font-semibold mb-2">Tags</h2>
+                    <div class="overflow-x-auto no-scrollbar mb-5">
+                        <div class="flex gap-3">
+                            {% for t in tags2 %}
+                            <button class="flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full
+                                        bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200
+                                        hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                                #{{ t.name }}
+                            </button>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                        <!-- Image -->
+                        <div class="w-full h-64 md:h-96 bg-cover bg-center rounded-lg mb-4" 
+                            style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80');">
+                        </div>
+
+                        <!-- Content -->
+                        <div class="prose dark:prose-invert text-slate-700 dark:text-slate-300">
+                            {{blog.body}}
+                        </div>
+                    </div>
+
+
+                    <!-- Blog actions -->
+                    <div class="flex gap-4 mt-4 px-4 md:px-10">
+
+                        <button 
+                            onclick="likeBlog(this)" 
+                            data-blog-id="{{ blog.blog_id }}"
+                            class="flex items-center gap-1 text-sm transition-colors"
+                            style="color: gray;">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21l-7.682-7.682a4.5 4.5 0 010-6.364z"
+                                    fill="none" /> <!-- ใช้ fill="none" เป็นค่าเริ่มต้น -->
+                            </svg>
+                            <span class="ml-1 text-sm text-slate-700 dark:text-slate-300">{{ blog.likes }}</span>
+                        </button>
+
+                             <button 
+                                onclick="MarkBlog(this)" 
+                                data-blog-id="{{ blog.blog_id }}"
+                                class="flex items-center gap-1 text-sm text-gray-500 hover:text-red-500 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 5v16l7-5 7 5V5a2 2 0 00-2-2H7a2 2 0 00-2 2z" />
+                                </svg>
+                                <span class="ml-1 text-sm text-slate-700 dark:text-slate-300">{{ bookmark_count }}</span>
+                            </button>
+
+                            <button onclick="copyBlogLink('{{ request.build_absolute_uri }}')" 
+                                class="flex items-center gap-1 text-sm text-primary hover:text-primary-dark hover:underline">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" stroke="none">
+                                    <circle cx="6" cy="12" r="2"/>
+                                    <circle cx="18" cy="6" r="2"/>
+                                    <circle cx="18" cy="18" r="2"/>
+                                    <line x1="6" y1="12" x2="18" y2="6" stroke="currentColor" stroke-width="2"/>
+                                    <line x1="6" y1="12" x2="18" y2="18" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                <span class="ml-1 text-sm text-slate-700 dark:text-slate-300">Share</span>
+                            </button>
+
+                    </div>
+                </div>
+                <p class="text-sm text-red-500 mb-6">Bookmark count: {{ bookmark_count }}</p>
+                <p class="text-sm text-red-500 mb-6">Bookmark: {{ bookmarked }}</p>
+                
+
+            <!-- Comments -->
+            <section class="px-4 md:px-10 mb-12 mt-7">
+                <!-- fortest ID blog -->
+                <!-- <p class="text-sm text-red-500 mb-6">Blog ID: {{ blog.blog_id }}</p> -->
+
+                <h2 class="text-xl font-bold mb-4">Comments ({{ comments.count }})</h2>
+
+                                <!-- Add Comment -->
+                <form method="post" action="{% url 'blog-detail' blog.blog_id %}">
+                    {% csrf_token %}
+                    <div class="flex gap-3 mb-6">
+                        <input type="text" name="{{ comment_form.comment_text.name }}" 
+                            value="" 
+                            placeholder="Write a comment..."
+                            class="flex-1 border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark">Send</button>
+                    </div>
+                    {% for error in comment_form.comment_text.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+                    {% endfor %}
+                </form>
+
+
+                <!-- Filter Dropdown -->
+                <div class="relative inline-block mb-4">
+                    <button id="filterBtn" class="inline-flex justify-between items-center px-4 py-2 bg-gray-200 rounded shadow hover:bg-gray-300 focus:outline-none">
+                        {% if sort_by == 'popular' %}
+                            ไลค์มากที่สุด
+                        {% else %}
+                            ล่าสุด
+                        {% endif %}
+                        <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <div id="filterDropdown" class="hidden absolute mt-2 w-40 bg-white shadow-lg rounded z-10">
+                        <a href="?sort=latest" class="block px-4 py-2 hover:bg-gray-100
+                            {% if sort_by == 'latest' %}font-semibold{% endif %}">
+                            ล่าสุด
+                        </a>
+                        <a href="?sort=popular" class="block px-4 py-2 hover:bg-gray-100
+                            {% if sort_by == 'popular' %}font-semibold{% endif %}">
+                            ไลค์มากที่สุด
+                        </a>
+                    </div>
+
+                </div>
+
+                <!-- Comments List -->
+                    <div class="space-y-4 relative group">
+                    {% for comment in comments %}
+                    <div class="flex gap-3 items-start mb-4 border-b-2 py-2">
+                        <div class="w-12 h-12 rounded-full bg-cover bg-center"
+                            style="background-image: url('{{ comment.user.profile_path }}');"></div>
+
+                        <div class="flex-1">
+                            <div class="flex gap-2">
+                                <div class="w-10 h-10 rounded-full bg-cover bg-center border-2 border-slate-300"
+                                    style="background-image: url('{% if comment.user.profile_path %}{{ comment.user.profile_path.url }}{% else %}{% static 'no-image.png' %}{% endif %}');">
+                                </div>
+
+                                <div> 
+                                    <div class="flex justify-between items-center gap-5">
+                                        <span class="font-bold">{{ comment.user.auth_user.username }}</span>
+                                        <span class="text-sm text-slate-400">{{ comment.created_date }}</span>
+                                    </div>
+                                    <p class="text-slate-700 dark:text-slate-300">{{ comment.comment_text }}</p>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-7">
+
+                                <button 
+                                    onclick="likeComment(this)" 
+                                    data-comment-id="{{ comment.comment_id }}"
+                                    class="flex items-center gap-1 text-sm transition"
+                                    style="color: gray;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" stroke="none">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 
+                                        5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 
+                                        4.5 2.09C13.09 3.81 14.76 3 16.5 
+                                        3 19.58 3 22 5.42 22 8.5c0 
+                                        3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                                        fill="none" stroke="currentColor" stroke-width="2"/>
+                                    </svg>
+                                    <span class="ml-1 text-sm text-slate-700 dark:text-slate-300">
+                                        {{ comment.likes }}
+                                    </span>
+                                </button>
+
+                                <!-- Reply Form -->
+                                <div class="mt-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">ตอบกลับ</label>
+                                    <form method="post" action="{% url 'blog-detail' blog.blog_id %}">
+                                        {% csrf_token %}
+                                        <div class="flex gap-3 items-center">
+                                            <!-- Input ข้อความ reply -->
+                                            <input type="text" 
+                                                name="comment_text" 
+                                                value="" 
+                                                placeholder="Write a reply..."
+                                                class="flex-1 border text-sm rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+
+                                            <!-- Hidden field สำหรับ parent comment -->
+                                            <input type="hidden" name="parent_id" value="{{ comment.comment_id }}">
+
+                                            <!-- Submit button -->
+                                            <button type="submit" 
+                                                    class="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark">
+                                                Send
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                            </div> 
+
+                        
+                        {% if comment.replies.all %}
+                        
+                            <!-- ปุ่มเปิด/ปิด -->
+                            
+                             <button 
+                            class="text-sm text-blue-500 mt-2 flex items-center gap-1"
+                            onclick="toggleReplies(this)"
+                            data-count="{{ comment.replies.count }}">
+                            ▶ ดูคำตอบ ({{ comment.replies.count }})
+                            </button>
+
+
+                            <!-- กล่อง replies -->
+                            <div class="hidden mt-3 ml-10 space-y-3 replies-box">
+                            {% for reply in comment.replies.all %}
+                                <div class="flex gap-3 items-start border-l-2 border-slate-200 dark:border-slate-700 pl-3 border-b-2 py-2">
+                                <div class="w-10 h-10 rounded-full bg-cover bg-center"
+                                    style="background-image: url('{{ reply.user.profile_path }}');"></div>
+                                <div class="flex-1">
+                                    <div class="flex gap-2">
+                                        <div class="w-10 h-10 rounded-full bg-cover bg-center border-2 border-slate-300"
+                                            style="background-image: url('{% if reply.user.profile_path %}{{ reply.user.profile_path.url }}{% else %}{% static 'no-image.png' %}{% endif %}');">
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between items-center gap-5">
+                                                <span class="font-bold">{{ reply.user.auth_user.username }}</span>
+                                                <span class="text-sm text-slate-400">{{ reply.created_date }}</span>
+                                            </div>
+                                            <p class="text-slate-700 dark:text-slate-300">{{ reply.comment_text }}</p>                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            {% endfor %}
+                            </div>
+                        {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    </div>
+        
+            </section>
+
+    <script>
+        function toggleReplies(button) {
+            // หากดึง div.replies-box ที่อยู่ถัดจากปุ่มนี้
+            const repliesBox = button.nextElementSibling;
+
+            if (!repliesBox) return;
+
+            // toggle hidden class
+            repliesBox.classList.toggle('hidden');
+
+            // สลับข้อความในปุ่มด้วย (optional)
+            if (repliesBox.classList.contains('hidden')) {
+                button.innerHTML = "▶ ดูคำตอบ (" + button.dataset.count + ")";
+            } else {
+                button.innerHTML = "▼ ซ่อนคำตอบ (" + button.dataset.count + ")";
+            }
+        }
+
+        const filterBtn = document.getElementById('filterBtn');
+        const filterDropdown = document.getElementById('filterDropdown');
+
+        filterBtn.addEventListener('click', () => {
+            filterDropdown.classList.toggle('hidden');
+        });
+
+        // ปิด dropdown เมื่อคลิกนอก
+        window.addEventListener('click', function(e) {
+            if (!filterBtn.contains(e.target) && !filterDropdown.contains(e.target)) {
+                filterDropdown.classList.add('hidden');
+            }
+        });
+
+        function copyBlogLink(link) {
+            navigator.clipboard.writeText(link)
+                .then(() => {
+                    // แจ้งเตือนเมื่อคัดลอกสำเร็จ
+                    alert('ลิงก์ถูกคัดลอกแล้ว!');
+                })
+                .catch(err => {
+                    console.error('ไม่สามารถคัดลอกลิงก์ได้:', err);
+                });
+        }
+
+function toggleLike(btn, type) {
+    if (btn.disabled) return;
+
+    const idKey = type === 'blog' ? 'blogId' : 'commentId';
+    const likedStorageKey = type === 'blog' ? 'liked_blog_' : 'liked_comment_';
+    const id = btn.dataset[idKey];
+    const likedKey = likedStorageKey + id;
+    const isLiked = localStorage.getItem(likedKey);
+
+    btn.disabled = true;
+
+    fetch(`/${type}-like/${id}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: isLiked ? 'unlike' : 'like' })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.likes !== undefined) {
+            btn.querySelector('span').innerText = data.likes;
+
+            const svgPath = btn.querySelector('svg path');
+            if (isLiked) {
+                localStorage.removeItem(likedKey);
+                svgPath.setAttribute('fill', 'none');     // empty heart
+                btn.style.color = 'gray';
+            } else {
+                localStorage.setItem(likedKey, '1');
+                svgPath.setAttribute('fill', 'currentColor'); // full heart
+                btn.style.color = 'red';
+            }
+        }
+    })
+    .catch(err => console.error(err))
+    .finally(() => btn.disabled = false);
+}
+
+// สำหรับ blog
+function likeBlog(btn) {
+    toggleLike(btn, 'blog');
+}
+
+// สำหรับ comment
+function likeComment(btn) {
+    toggleLike(btn, 'comment');
+}
+
+// โหลดหน้าแล้วตรวจว่าไลค์ไว้แล้วหรือไม่
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("[data-blog-id], [data-comment-id]").forEach(btn => {
+        const type = btn.dataset.blogId ? 'blog' : 'comment';
+        const id = type === 'blog' ? btn.dataset.blogId : btn.dataset.commentId;
+        const likedKey = (type === 'blog' ? 'liked_blog_' : 'liked_comment_') + id;
+        const svgPath = btn.querySelector('svg path');
+
+        if (localStorage.getItem(likedKey)) {
+            svgPath.setAttribute('fill', 'currentColor');
+            btn.style.color = 'red';
+        } else {
+            svgPath.setAttribute('fill', 'none');
+            btn.style.color = 'gray';
+        }
+    });
+});
+
+function MarkBlog(btn) {
+    const blogId = btn.dataset.blogId;
+    btn.disabled = true;
+
+    fetch(`/blog-bookmark/${blogId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+        },
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.bookmarked !== undefined) {
+            const svg = btn.querySelector('svg');
+            const span = btn.querySelector('span');
+
+            // toggle สีไอคอนและปุ่ม
+            if (data.bookmarked) {
+                svg.classList.add('text-blue-500'); // heart/bookmark สีเต็ม
+                btn.classList.add('text-blue-500');
+            } else {
+                svg.classList.remove('text-blue-500'); // กลับเป็นสีเดิม
+                btn.classList.remove('text-blue-500');
+            }
+
+            // อัปเดตตัวเลข
+            span.innerText = data.bookmark_count;
+        }
+    })
+    .finally(() => btn.disabled = false);
+}
+
+// โหลดหน้าแล้วตรวจว่าถูก bookmark ไว้แล้ว
+document.addEventListener("DOMContentLoaded", function() {
+    const buttons = document.querySelectorAll("[data-blog-id]");
+    buttons.forEach(btn => {
+        const blogId = btn.dataset.blogId;
+
+        {% if request.user.is_authenticated %}
+        {% for b in request.user.user.bookmarked_posts.all %}
+        if (blogId == '{{ b.blog_id }}') {
+            btn.querySelector('svg').classList.add('text-blue-500');
+            btn.classList.add('text-blue-500');
+        }
+        {% endfor %}
+        {% endif %}
+    });
+});
+</script>
+
+
+{% endblock %}
+
