@@ -40,13 +40,13 @@ class HomeView(View):
     def get(self, request):
         # search_query = request.GET.get('search', '').strip()
         # categories = Category.objects.filter(name__icontains=search_query) if search_query else []
-        # blogs = Blog.objects.filter(header__icontains=search_query) if search_query else []
+        blogs = Blog.objects.annotate(num_comments=Count("comment")).all()
         categories = Category.objects.all()
-
+    
         
         context = {
             'categories': categories,
-            # 'blogs': blogs,
+            'blogs': blogs,
             # 'search_query': search_query,
         }
         return render(request, 'home.html', context)

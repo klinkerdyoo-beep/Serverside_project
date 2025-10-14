@@ -1,47 +1,54 @@
-<div class="bg-background-light dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300">
+{% for blog in blogs %}
+<a href="{% url 'blog-detail' blog_id=blog.blog_id %}" >
+    <div class="bg-background-light dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300">
 
-    {% if True %}
-        <img alt="Ocean depths" class="w-full h-48 object-cover" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80" />
-    {% endif %}
+        {% with blog.blogimage_set.all.0 as first_image %}
+            {% if first_image and first_image.image_path %}
+                <img src = "{{ first_image.image_path.url }}" alt = "{{ blog.blog_id }}_Blog image" 
+                class = "w-full max-h-48 object-cover mx-auto"/>
+            {% endif %}
+        {% endwith %}
 
-    <div class="p-6">
-        <div class="mb-4">
-            <span class="text-xs font-semibold uppercase tracking-wider bg-primary/10 text-primary py-1 px-3 rounded-full">Science</span>
-        </div>
 
-        <h3 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">
-            Exploring the Depths of the Ocean
-        </h3>
-
-        <p class="text-slate-600 dark:text-slate-400 mb-4 text-base">
-            Dive into the unknown and uncover the secrets of the deep blue.
-        </p>
-
-        <!-- Author + Date -->
-        <div class="flex items-center text-sm text-slate-500 dark:text-slate-400 mb-4">
-            <div class="w-8 h-8 rounded-full bg-cover bg-center mr-3"
-                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAFvN6jq3Ifiut0cIKCRzpLKkvD7wR0nk3lPz6tMXKdJy89ObmHA0-tXZUJp9beVBNoKtI0xkXIU_T2xrD8m_-PHJribo6s9O8KbFJfd73yZ7mc-f3in1rcN3wDWKh_32ISMcaFmbgp59K4mzyo4B9q3P9X-Zr-eyrTGM0lxNqgYlMFmuchiwbC-XvTsGvJUyJm50uKxTQJkaRCTKy65HOnqaQvKCJDlx2aVHH5LxgyVZlFtWDDgVxAMUzarMQgB1RwW2vAc8n3Tw");'>
+        <div class="p-6">
+            <div class="mb-4">
+                <span class="text-xs font-semibold uppercase tracking-wider bg-primary/10 text-primary py-1 px-3 rounded-full">Category</span>
             </div>
-            <span>John Smith</span>
-            <span class="mx-2">·</span>
-            <span>May 18, 2024</span>
-        </div>
 
-        <!-- Interaction Icons -->
-        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-            <div class="flex items-center gap-4">
-                <div class="flex items-center gap-1">
-                    <span class="material-symbols-outlined text-base">favorite</span>
-                    <span class="text-xs font-medium">87</span>
+            <h3 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">
+                {{ blog.header }}
+            </h3>
+
+            <p class="text-slate-600 dark:text-slate-400 mb-4 text-base">
+                {{ blog.body|truncatechars:50 }}
+            </p>
+
+            <!-- Author + Date -->
+            <div class="flex items-center text-sm text-slate-500 dark:text-slate-400 mb-4">
+                <div class="w-8 h-8 rounded-full bg-cover bg-center mr-3"
+                    style='background-image: url("{{blog.user.profile_path}}");'>
                 </div>
-                <div class="flex items-center gap-1">
-                    <span class="material-symbols-outlined text-base">chat_bubble</span>
-                    <span class="text-xs font-medium">22</span>
-                </div>
+                <span>{{ blog.user.auth_user.username }}</span>
+                <span class="mx-2">·</span>
+                <span>{{ blog.created_date }}</span>
             </div>
-            <button class="text-primary hover:text-primary/80 transition-colors">
-                <span class="material-symbols-outlined">bookmark</span>
-            </button>
+
+            <!-- Interaction Icons -->
+            <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-1">
+                        <span class="material-symbols-outlined text-base">favorite</span>
+                        <span class="text-xs font-medium">{{ blog.likes }}</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span class="material-symbols-outlined text-base">chat_bubble</span>
+                        <span class="text-xs font-medium">{{ blog.num_comments }}</span>
+                    </div>
+                </div>
+                <button class="text-primary hover:text-primary/80 transition-colors">
+                    <span class="material-symbols-outlined">bookmark</span>
+                </button>
+            </div>
         </div>
     </div>
-</div>
+{% endfor %}
