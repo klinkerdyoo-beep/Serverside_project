@@ -7,8 +7,13 @@ from utils.tailwinds import *
 
 
 class BlogForm(forms.ModelForm):
-    tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(
-        ),  widget=forms.CheckboxSelectMultiple, required = False)
+    tags = forms.CharField(
+        widget=forms.TextInput(attrs={
+            "class": FIELD_WIDE_INPUT_CLASSES,
+            "id": "id_tags",
+            "placeholder": "Enter tag(s)"
+        }),
+        required = True)
     
     category = forms.ModelChoiceField(
         queryset=Category.objects.all(),
@@ -47,6 +52,24 @@ class BlogForm(forms.ModelForm):
     class Meta:
         model = Blog
         fields = ['header', 'body', 'tags', 'category', 'blogstatus']
+        
+    def clean_tags(self):
+        tags_input = self.cleaned_data.get('tags', '')
+        tag_names = [t.strip() for t in tags_input.split(',') if t.strip()]
+        return tag_names
+    
+    def save(self, commit=True, user=None, status=None):
+        blog = super().save(commit=False)
+        if user:
+            blog.user = user
+        if status:
+            blog.blogstatus = status
+
+        blog.category = self.cleaned_data.get('category')
+
+        if commit:
+            blog.save()
+        return blog
 
 
 class BlogImageForm(forms.ModelForm):

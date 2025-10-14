@@ -13,7 +13,7 @@ class Category(models.Model):
 
 class Tag(models.Model):
     tag_id = models.AutoField(primary_key=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=100, null=False)
 
     def __str__(self):
