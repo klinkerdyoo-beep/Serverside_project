@@ -66,18 +66,19 @@ class CreateBlogView(LoginRequiredMixin, PermissionRequiredMixin, View):
                     blogimg.blog = blog
                     blogimg.save()
 
-                    tag_names = blogform.cleaned_data['tags']
-                    if blog.category:
+                    tag_names = blogform.cleaned_data.get('tags', [])
+                    if blog.category and blog.category.name:
                         cat_name = blog.category.name.strip()
-                        if cat_name not in tag_names:
+                        if cat_name and cat_name not in tag_names:
                             tag_names.append(cat_name)
 
                     for name in tag_names:
-                        tag, created = Tag.objects.get_or_create(
-                            name=name,
-                            defaults={'category': blog.category}
-                        )
-                        BlogTag.objects.get_or_create(blog=blog, tag=tag)
+                        if name:
+                            tag, created = Tag.objects.get_or_create(
+                                name=name,
+                                defaults={'category': blog.category}
+                            )
+                            BlogTag.objects.get_or_create(blog=blog, tag=tag)
                     return redirect('home')
                 
                 else:

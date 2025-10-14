@@ -13,7 +13,7 @@ class BlogForm(forms.ModelForm):
             "id": "id_tags",
             "placeholder": "Enter tag(s)"
         }),
-        required = True)
+        required = False)
     
     category = forms.ModelChoiceField(
         queryset=Category.objects.all(),
