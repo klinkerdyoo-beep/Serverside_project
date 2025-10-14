@@ -40,7 +40,7 @@ class HomeView(View):
     def get(self, request):
         # search_query = request.GET.get('search', '').strip()
         # categories = Category.objects.filter(name__icontains=search_query) if search_query else []
-        blogs = Blog.objects.annotate(num_comments=Count("comment")).all()
+        blogs = Blog.objects.annotate(num_comments=Count("comment")).filter(blogstatus__status = "public" )
         categories = Category.objects.all()
     
         

@@ -1,19 +1,20 @@
+{% load static %}
 {% for blog in blogs %}
 <a href="{% url 'blog-detail' blog_id=blog.blog_id %}" >
-    <div class="bg-background-light dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300">
+    <div id="{{ blog.blog_id }}_blogbox" class="bg-background-light dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300">
 
         {% with blog.blogimage_set.all.0 as first_image %}
             {% if first_image and first_image.image_path %}
-                <img src = "{{ first_image.image_path.url }}" alt = "{{ blog.blog_id }}_Blog image" 
+                <img src = "{{ first_image.image_path.url }}" alt = "{{ blog.blog_id }}_blogimage" 
                 class = "w-full max-h-48 object-cover mx-auto"/>
             {% endif %}
         {% endwith %}
 
 
         <div class="p-6">
-            <div class="mb-4">
+            <!-- <div class="mb-4">
                 <span class="text-xs font-semibold uppercase tracking-wider bg-primary/10 text-primary py-1 px-3 rounded-full">Category</span>
-            </div>
+            </div> -->
 
             <h3 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">
                 {{ blog.header }}
@@ -26,7 +27,7 @@
             <!-- Author + Date -->
             <div class="flex items-center text-sm text-slate-500 dark:text-slate-400 mb-4">
                 <div class="w-8 h-8 rounded-full bg-cover bg-center mr-3"
-                    style='background-image: url("{{blog.user.profile_path}}");'>
+                    style='background-image: url("{% if blog.user.profile_path %}{{ blog.user.profile_path.url }}{% else %}{% static "img/no-img-user.png" %}{% endif %}");'>
                 </div>
                 <span>{{ blog.user.auth_user.username }}</span>
                 <span class="mx-2">·</span>

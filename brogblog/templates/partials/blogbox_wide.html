@@ -1,19 +1,20 @@
-<div class="bg-background-light dark:bg-background-dark p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+{% for blog in blogs %}
+<div id="{{ blog.blog_id }}_blogbox" class="bg-background-light dark:bg-background-dark p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
     <div class="flex items-start gap-4">
         <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-24 flex-shrink-0" 
-        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAPMkqvIw1oqD3udeSKfyTwOgDLFdmDqDevlMxMO2f_aAuSb9tD0brQjZayDFEIvG-vNsJrq4V2MPyPNUA5pIWHqXO01Kn-icPxJRiYq2Tz7zfrFwAZFqnsSaKdRt079YVfJ1-BoCcKr6ISDB2r197xo0X8BUBdB0SYYO2vq38G9iKPG_QNGfILKqVIqHF8o32RLT_8oj2I9Qwgt8bEV3LfayemygN0VfcbvE9jarZ835jFpPQnQ2GNmqMJ108HNVFgE3cz-Jxjzy0");'>
+        style='background-image: url("{% if blog.user.profile_path %}{{ blog.user.profile_path.url }}{% else %}{% static "img/no-img-user.png" %}{% endif %}");'>
         </div>
         <div class="flex-grow">
-            <p class="text-lg font-bold text-slate-900 dark:text-white mb-1 line-clamp-2">Exploring the Hidden Gems of Southeast Asia</p>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mb-3">Travel</p>
+            <p class="text-lg font-bold text-slate-900 dark:text-white mb-1 line-clamp-2">{{ blog.header }}</p>
+            <!-- <p class="text-sm text-slate-500 dark:text-slate-400 mb-3">Category</p> -->
             <div class="flex items-center gap-4 text-slate-500 dark:text-slate-400">
                 <div class="flex items-center gap-1">
                     <span class="material-symbols-outlined text-base">favorite</span>
-                    <span class="text-xs font-medium">87</span>
+                    <span class="text-xs font-medium">{{ blog.likes }}</span>
                 </div>
                 <div class="flex items-center gap-1">
                     <span class="material-symbols-outlined text-base">chat_bubble</span>
-                    <span class="text-xs font-medium">22</span>
+                    <span class="text-xs font-medium">{{ blog.num_comments }}</span>
                 </div>
             </div>
         </div>
@@ -22,3 +23,4 @@
         </button>
     </div>
 </div>
+{% endfor %}
