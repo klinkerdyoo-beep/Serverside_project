@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Account{% endblock %}
+
+{% block content %}
+<section class="max-w-5xl mx-auto px-6 py-10">
+    <!-- Profile Header -->
+    <div class="flex flex-col md:flex-row items-center gap-6 mb-10">
+        <div class="w-28 h-28 rounded-full bg-cover bg-center border-4 border-slate-300"
+             style="background-image: url('{% if user.profile_path %}{{ user.profile_path.url }}{% else %}{% static 'no-image.png' %}{% endif %}');">
+        </div>
+        <div class="text-center md:text-left">
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">{{ user.auth_user.username }}</h1>
+            <p class="text-slate-500 dark:text-slate-400">@{{ user.auth_user.username|lower }}</p>
+            <p class="mt-2 text-slate-700 dark:text-slate-300">Joined: {{ user.auth_user.date_joined|date:"F j, Y" }}</p>
+            <div class="mt-4">
+                <a href="#" class="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div x-data="{ tab: 'blogs' }" class="mb-8">
+        <div class="flex gap-3 mb-6 border-b pb-2 text-sm font-medium text-slate-600 dark:text-slate-300">
+            <button @click="tab='blogs'" :class="{ 'border-b-2 border-blue-500 text-blue-600': tab==='blogs' }">My Blogs</button>
+            <button @click="tab='bookmarks'" :class="{ 'border-b-2 border-blue-500 text-blue-600': tab==='bookmarks' }">Bookmarks</button>
+            <button @click="tab='comments'" :class="{ 'border-b-2 border-blue-500 text-blue-600': tab==='comments' }">Comments</button>
+            <button @click="tab='history'" :class="{ 'border-b-2 border-blue-500 text-blue-600': tab==='history' }">History</button>
+        </div>
+
+        <!-- My Blogs -->
+        <div x-show="tab==='blogs'" class="space-y-4">
+            {% for blog in user_blogs %}
+            <div class="p-4 bg-white dark:bg-slate-800 rounded-lg shadow hover:shadow-md transition">
+                <div class="flex flex-col md:flex-row gap-4">
+                    {% with blog.blogimage_set.all.0 as first_image %}
+                        {% if first_image and first_image.image_path %}
+                            <div class="w-full md:w-1/3 h-40 bg-cover bg-center rounded-lg" 
+                                style="background-image: url('{{ first_image.image_path.url }}');">
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold mb-1 text-slate-900 dark:text-white">
+                            <a href="{% url 'blog-detail' blog.blog_id %}" class="hover:underline">{{ blog.header }}</a>
+                        </h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">{{ blog.body|truncatechars:100 }}</p>
+                        <div class="mt-2 text-xs text-slate-400">Created: {{ blog.created_date|date:"M j, Y" }}</div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center text-slate-500 dark:text-slate-400">You haven’t created any blogs yet.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Bookmarks -->
+        <div x-show="tab==='bookmarks'" class="space-y-4">
+            {% for bookmark in bookmarked_blogs %}
+            <div class="p-4 bg-white dark:bg-slate-800 rounded-lg shadow hover:shadow-md transition">
+                <h3 class="text-lg font-semibold mb-1 text-slate-900 dark:text-white">
+                    <a href="{% url 'blog-detail' bookmark.blog_id %}" class="hover:underline">{{ bookmark.header }}</a>
+                </h3>
+                <p class="text-sm text-slate-600 dark:text-slate-400">{{ bookmark.user.auth_user.username }}</p>
+            </div>
+            {% empty %}
+            <p class="text-center text-slate-500 dark:text-slate-400">No bookmarks yet.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Comments -->
+        <div x-show="tab==='comments'" class="space-y-4">
+            {% for comment in user_comments %}
+            <div class="p-4 bg-white dark:bg-slate-800 rounded-lg shadow">
+                <p class="text-slate-700 dark:text-slate-300 mb-1">{{ comment.comment_text }}</p>
+                <a href="{% url 'blog-detail' comment.blog.blog_id %}" class="text-blue-500 text-sm hover:underline">
+                    On: {{ comment.blog.header }}
+                </a>
+                <div class="text-xs text-slate-400 mt-1">{{ comment.created_date|date:"M j, Y H:i" }}</div>
+            </div>
+            {% empty %}
+            <p class="text-center text-slate-500 dark:text-slate-400">No comments yet.</p>
+            {% endfor %}
+        </div>
+
+        <!-- History -->
+        <div x-show="tab==='history'" class="space-y-4">
+            {% for h in history %}
+            <div class="p-4 bg-white dark:bg-slate-800 rounded-lg shadow">
+                <a href="{% url 'blog-detail' h.blog.blog_id %}" class="text-blue-500 hover:underline">{{ h.blog.header }}</a>
+                <div class="text-xs text-slate-400 mt-1">Viewed on {{ h.viewed_at|date:"M j, Y H:i" }}</div>
+            </div>
+            {% empty %}
+            <p class="text-center text-slate-500 dark:text-slate-400">No viewing history yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
