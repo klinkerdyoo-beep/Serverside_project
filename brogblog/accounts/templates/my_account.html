@@ -17,6 +17,10 @@
             <div class="mt-4">
                 <a href="{% url 'edit-profile' %}" class="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark">Edit Profile</a>
             </div>
+            <div class="mt-2 flex gap-4">
+                <p><span class="font-semibold">{{ user_followers_count }}</span> Followers</p>
+                <p><span class="font-semibold">{{ user_following_count }}</span> Following</p>
+            </div>
         </div>
     </div>
 
@@ -63,7 +67,7 @@
 
                 {% else %}
                     <p class="text-center text-slate-500 dark:text-slate-400">
-                        You haven’t created any reported blogs yet.
+                        You haven’t had any blogs reported yet.
                     </p>
                 {% endif %}
             {% else %}

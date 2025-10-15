@@ -17,7 +17,7 @@ from .forms import *
 from .models import *
 from blogs.models import *
 from tags.models import *
-from accounts.models import User
+from accounts.models import *
 
 class LoginView(View):
     def get(self, request):
@@ -119,6 +119,8 @@ class MyAccountView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user.user  
         user_blogs = Blog.objects.filter(user=user).order_by('-created_date')
+        user_followers_count = Following.objects.filter(follow=user.auth_user).count() 
+        user_following_count = Following.objects.filter(user=user.auth_user).count()   
         filter_reported = request.GET.get("reported")
 
         user_blogs_reporte = None 
@@ -145,7 +147,9 @@ class MyAccountView(LoginRequiredMixin, View):
             'viewed_blogs': viewed_blogs,
             'history':history,
             'user_blogs_reporte':user_blogs_reporte,
-            'filter_reported':filter_reported
+            'filter_reported':filter_reported,
+            'user_followers_count': user_followers_count,
+            'user_following_count': user_following_count,
         }
 
         return render(request, "my_account.html", context)
