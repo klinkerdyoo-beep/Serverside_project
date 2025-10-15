@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Report List {% endblock %}
+
+{% block content %}
+<section class="max-w-5xl mx-auto px-6 py-10">
+    <h1 class="text-2xl font-bold mb-6">Report Management</h1>
+
+    <!-- Tabs -->
+    <div x-data="{ tab: 'blogs' }" class="mb-8">
+        <div class="flex gap-4 mb-6 border-b pb-2 text-sm font-medium text-slate-600 dark:text-slate-300">
+            <button @click="tab='blogs'" :class="tab==='blogs' ? 'border-b-2 border-blue-600 text-blue-600' : ''">
+                Blogs
+            </button>
+            <button @click="tab='comments'" :class="tab==='comments' ? 'border-b-2 border-blue-600 text-blue-600' : ''">
+                Comments
+            </button>
+            <button @click="tab='history'" :class="tab==='history' ? 'border-b-2 border-blue-600 text-blue-600' : ''">
+                History
+            </button>
+        </div>
+
+        <!-- Blog Reports -->
+        <div x-show="tab==='blogs'" class="space-y-6">
+            {% for report in reports %}
+                <div class="border rounded-lg shadow-sm p-4 bg-white dark:bg-gray-800">
+                    <div class="flex items-start gap-4">
+                        <!-- blog img -->
+                        {% with report.blog.blogimage_set.all.0 as first_image %}
+                            {% if first_image and first_image.image_path %}
+                                <div class="w-20 h-20 bg-center bg-no-repeat bg-cover rounded-md flex-shrink-0"
+                                    style="background-image: url('{{ first_image.image_path.url }}');">
+                                </div>
+                            {% else %}
+                                <div class="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-md flex-shrink-0"></div>
+                            {% endif %}
+                        {% endwith %}
+
+                        <!-- Blog Info -->
+                        <div class="flex-1">
+                            <a href="{% url 'blog-detail' report.blog.blog_id %}"
+                               class="font-bold text-lg text-blue-600 dark:text-blue-400 hover:underline">
+                                {{ report.blog.header|truncatechars:50 }}
+                            </a>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                {{ report.blog.category.name }} | by {{ report.blog.user.auth_user.username }}
+                            </p>
+
+                            <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                                Reported by: {{ report.reporter.auth_user.username }} <br>
+                                Status: 
+                                <span class="px-2 py-1 rounded
+                                    {% if report.status == 'resolved' %}bg-green-500 text-white
+                                    {% elif report.status == 'rejected' %}bg-red-500 text-white
+                                    {% else %}bg-yellow-400 text-gray-900{% endif %}">
+                                    {{ report.status|capfirst }}
+                                </span>
+                                {% if report.handled_by %}
+                                    | Handled by: {{ report.handled_by.auth_user.username }}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-col gap-2">
+                            {% if report.status == 'pending' %}
+                                <form method="post" action="{% url 'handle-report-blog' report.reportblog_id %}" class="flex flex-col gap-2">
+                                    {% csrf_token %}
+
+                                    <!-- Resolve Type Select -->
+                                    <select name="resolve_type" class="px-2 py-1 border rounded text-sm">
+                                        <option value="private">Make Private</option>
+                                        <option value="delete">Delete Blog</option>
+                                    </select>
+
+                                    <button type="submit" name="action" value="resolve" 
+                                            class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                                        Resolve
+                                    </button>
+
+                                    <button type="submit" name="action" value="reject" 
+                                            class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition">
+                                        Reject
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center text-gray-500 dark:text-gray-400">No reports found.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Comment Reports -->
+        <div x-show="tab==='comments'" class="space-y-6">
+            {% for report in comment_reports %}
+                <div class="border rounded-lg shadow-sm p-4 bg-white dark:bg-gray-800">
+                    <p class="text-sm text-gray-600 dark:text-gray-300">
+                        Comment by {{ report.comment.user.username }}: {{ report.comment.comment_text|truncatechars:50 }} <br>
+                        Reported by: {{ report.reporter.username }} <br>
+                        Status: 
+                        <span class="px-2 py-1 rounded
+                            {% if report.status == 'resolved' %}bg-green-500 text-white
+                            {% elif report.status == 'rejected' %}bg-red-500 text-white
+                            {% else %}bg-yellow-400 text-gray-900{% endif %}">
+                            {{ report.status|capfirst }}
+                        </span>
+                        {% if report.handled_by %}
+                            | Handled by: {{ report.handled_by.username }}
+                        {% endif %}
+                    </p>
+                </div>
+            {% empty %}
+                <p class="text-center text-gray-500 dark:text-gray-400">No comment reports.</p>
+            {% endfor %}
+        </div>
+
+        <!-- History (Optional) -->
+        <div x-show="tab==='history'" class="space-y-6">
+            <p class="text-gray-500 dark:text-gray-400">History section is under construction.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

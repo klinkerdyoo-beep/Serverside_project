@@ -113,7 +113,9 @@ class EditProfileView(LoginRequiredMixin, View):
             return redirect('home')
         print("form not valid:", form.errors)
         return render(request, 'edit_profile.html', {"form": form})
+    
 class MyAccountView(LoginRequiredMixin, View):
+    login_url = settings.LOGIN_URL
     def get(self, request):
         user = request.user.user  
         user_blogs = Blog.objects.filter(user=user).order_by('-created_date')
@@ -138,3 +140,51 @@ class MyAccountView(LoginRequiredMixin, View):
         }
 
         return render(request, "my_account.html", context)
+
+class OthersAccountView(View):
+    def get(self, request, user_id):
+        user = User.objects.get(auth_user__id=user_id)
+        myself = request.user.user  
+
+        user_blogs = Blog.objects.filter(user = user, blogstatus__status = "public")
+        # รับ query param สำหรับ filter
+        sort_by = request.GET.get("sort")  # 'latest' หรือ 'popular'
+
+        if sort_by == 'latest':
+            user_blogs = user_blogs.order_by("-created_date")
+        elif sort_by == 'popular':
+            user_blogs = user_blogs.order_by("-likes")
+        else:
+            user_blogs = user_blogs.order_by("-created_date")  # default
+
+        following_ids = list(myself.auth_user.following.values_list('follow_id', flat=True))
+
+            
+        context = {
+            'user': user,
+            'myself': myself,
+            'user_blogs': user_blogs,
+            'following_ids': following_ids,
+        }
+
+        return render(request, "others_account.html", context)
+    
+def follow(request, user_id):
+    try:
+        target_user = User.objects.get(auth_user__id=user_id)
+        myself = request.user.user
+    except User.DoesNotExist:
+        return JsonResponse({"error": "User not found"}, status=404)
+
+    if target_user == myself:
+        return JsonResponse({"error": "Cannot follow yourself"}, status=400)
+
+    existing_follow = Following.objects.filter(user=myself.auth_user, follow=target_user.auth_user)
+    if existing_follow.exists():
+        existing_follow.delete()
+        action = "unfollowed"
+    else:
+        Following.objects.create(user=myself.auth_user, follow=target_user.auth_user)
+        action = "followed"
+
+    return redirect('others-account', user_id=user_id)

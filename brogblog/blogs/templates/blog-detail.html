@@ -11,9 +11,7 @@
                         <div class="flex flex-row gap-3 border-b mb-5 bg-white p-5">
                         <!-- Author -->
                         <div class="flex flex-1 items-center gap-3 mb-4">
-                                <div class="w-10 h-10 rounded-full bg-cover bg-center border-2 border-slate-300"
-                                    style="background-image: url('{% if blog.user.profile_path %}{{ blog.user.profile_path.url }}{% else %}{% static 'no-image.png' %}{% endif %}');">
-                                </div>
+                                {% include "partials/profile_icon.html" %}
                             <div>
                                 <span class="font-semibold text-slate-800 dark:text-slate-200">{{blog.user.auth_user.username}}</span>
                                 <p>{{blog.created_date}}</p>
@@ -31,7 +29,7 @@
                                 opacity-0 group-hover:opacity-100
                                 invisible group-hover:visible
                                 transition-all duration-200 z-10">
-                        <a href="{% url 'home' %}" class="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700">Translate</a>
+                        <button onclick="translateBlog({{ blog.blog_id }})" class="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700">Translate</button>
                         <a href="#" onclick="openReportModal({{ blog.blog_id }})" class="block px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700">
                         Report
                         </a>              
@@ -76,8 +74,8 @@
 
 
                     <div class="px-10 py-6 bg-white dark:bg-slate-900  mb-8">
-                        <!-- Title -->
-                        <h1 class="text-3xl font-bold mb-4 text-slate-900 dark:text-white">{{ blog.header }}</h1>
+                        <!-- Header -->
+                        <h1 id="blog_header" class="text-3xl font-bold mb-4 text-slate-900 dark:text-white">{{ blog.header }}</h1>
                         
                     <!-- Categories -->
                     <h2 class="text-lg font-semibold mb-2">Categories</h2>
@@ -557,6 +555,23 @@ document.getElementById('reportForm').addEventListener('submit', function(e){
     })
     .catch(err => alert("Error: " + err));
 });
+
+async function translateBlog(blogId) {
+    const response = await fetch(`{% url 'translate' 0 %}`.replace('0', blogId));
+    const data = await response.json();
+
+    if (data.error) {
+        alert(data.error);
+        return;
+    }
+
+    const headerEl = document.getElementById("blog_header");
+    if (headerEl) headerEl.innerText = data.header;
+
+    const bodyEl = document.getElementById("blog_body");
+    if (bodyEl) bodyEl.innerText = data.body;
+}
+
 
 </script>
 

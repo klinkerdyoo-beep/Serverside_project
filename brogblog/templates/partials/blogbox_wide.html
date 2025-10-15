@@ -1,8 +1,8 @@
 {% load static %}
-{% for blog in blogs %}
+{% for blog in user_blogs %}
 <a href="{% url 'blog-detail' blog_id=blog.blog_id %}" >
     <div id="{{ blog.blog_id }}_blogbox" 
-        class="bg-background-light dark:bg-background-dark p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+        class="bg-background-white dark:bg-background-dark p-4 rounded-lg shadow-sm hover:shadow-md border-gray-300 transition-shadow">
         
         <div class="flex items-start justify-between gap-4">
             
@@ -63,6 +63,8 @@
         </div>
     </div>
 </a>
+{% empty %}
+<p class="text-center text-slate-500 dark:text-slate-400">This account hasn’t created any blogs yet.</p>
 {% endfor %}
 
 <script>

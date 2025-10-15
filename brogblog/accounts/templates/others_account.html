@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ user.auth_user.username }}{% endblock %}
+
+{% block content %}
+<section class="max-w-5xl mx-auto px-6 py-10">
+    <!-- Profile Header -->
+    <div class="flex flex-col md:flex-row items-center gap-6 mb-10">
+        <div class="w-28 h-28 rounded-full bg-cover bg-center border-4 border-slate-300"
+             style="background-image: url('{% if user.profile_path %}{{ user.profile_path.url }}{% else %}{% static 'no-image.png' %}{% endif %}');">
+        </div>
+        <div class="text-center md:text-left">
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">{{ user.auth_user.username }}</h1>
+            <p class="text-slate-500 dark:text-slate-400">@{{ user.auth_user.username|lower }}</p>
+            <div class="mt-4">
+                {% if request.user.user != user %}
+                    {% if user.auth_user.id in following_ids %}
+                        <!-- for unfollow -->
+                        <a href="{% url 'follow-user' user_id=user.auth_user.id %}" 
+                        class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-red-300">
+                            Following
+                        </a>
+                    {% else %}
+                        <!-- for follow -->
+                        <a href="{% url 'follow-user' user_id=user.auth_user.id %}" 
+                        class="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark">
+                            Follow
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <span class="px-4 py-2 bg-gray-400 text-white rounded cursor-not-allowed">Follow</span>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div x-data="{ tab: 'blogs' }" class="mb-8">
+        <div class="flex gap-3 mb-6 border-b pb-2 text-sm font-medium text-slate-600 dark:text-slate-300">
+            <!-- Filter Dropdown -->
+            <div class="relative inline-block mb-4">
+                <button id="filterBtn" class="inline-flex justify-between items-center px-4 py-2 bg-gray-200 rounded shadow hover:bg-gray-300 focus:outline-none transition">
+                    <span>Filter</span> <!-- Always show "Filter" -->
+                    <!-- Arrow -->
+                    <svg id="filterArrow" class="ml-2 h-4 w-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                <div id="filterDropdown" class="hidden absolute mt-2 w-40 bg-white shadow-lg rounded z-10">
+                    <a href="?sort=latest" class="block px-4 py-2 hover:bg-gray-100 {% if sort_by == 'latest' %}font-semibold{% endif %}">Latest</a>
+                    <a href="?sort=popular" class="block px-4 py-2 hover:bg-gray-100 {% if sort_by == 'popular' %}font-semibold{% endif %}">Most Liked</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blogs -->
+        <div x-show="tab==='blogs'" class="space-y-4">
+                {% include "partials/blogbox_wide.html" %}
+        </div>
+    </div>
+</section>
+<script>
+    const filterBtn = document.getElementById('filterBtn');
+    const filterDropdown = document.getElementById('filterDropdown');
+    const filterArrow = document.getElementById('filterArrow');
+
+    filterBtn.addEventListener('click', () => {
+        filterDropdown.classList.toggle('hidden');
+        filterArrow.classList.toggle('rotate-180'); // Rotate the arrow 180 degrees
+    });
+
+    // Close dropdown when clicking outside
+    window.addEventListener('click', function(e) {
+        if (!filterBtn.contains(e.target) && !filterDropdown.contains(e.target)) {
+            filterDropdown.classList.add('hidden');
+            filterArrow.classList.remove('rotate-180');
+        }
+    });
+</script>
+{% endblock %}

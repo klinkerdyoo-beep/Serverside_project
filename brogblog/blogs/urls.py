@@ -17,4 +17,5 @@ urlpatterns = [
     path('category-detail/<str:name>/', views.CategoryDetailView.as_view(), name='category-detail'),
     # path('tag-detail/<int:tag_id>/', views.TagDetailView.as_view(), name='tag-detail'),
     path('category-detail/<str:name>/<int:tag_id>/',  views.CategoryDetailView.as_view(), name='category-detail-tag'),
+    path("translate/<int:blog_id>/", views.translate_blog, name="translate"),
 ]
