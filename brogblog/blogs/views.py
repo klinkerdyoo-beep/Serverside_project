@@ -157,8 +157,13 @@ class BlogDetailView(View):
             user = request.user.user  # custom User
             bookmarked = blog in user.bookmarked_posts.all()
 
-        blog.views +=1
-        blog.save()
+            history = ViewingHistory.objects.filter(user=user, blog=blog).first()
+
+            if not history:
+                ViewingHistory.objects.create(user=user, blog=blog)
+            else:
+                history.last_viewed = timezone.now()
+                history.save()
 
         # รับ query param สำหรับ filter
         sort_by = request.GET.get("sort")  # 'latest' หรือ 'popular'
