@@ -113,7 +113,9 @@ class EditProfileView(LoginRequiredMixin, View):
             return redirect('home')
         print("form not valid:", form.errors)
         return render(request, 'edit_profile.html', {"form": form})
+    
 class MyAccountView(LoginRequiredMixin, View):
+    login_url = settings.LOGIN_URL
     def get(self, request):
         # ดึง user ปัจจุบัน (custom user)
         user = request.user.user  
@@ -144,3 +146,18 @@ class MyAccountView(LoginRequiredMixin, View):
         }
 
         return render(request, "my_account.html", context)
+
+class OthersAccountView(View):
+    def get(self, request, user_id):
+        user = User.objects.get(auth_user__id=user_id)
+        myself = request.user.user  
+
+        user_blogs = Blog.objects.filter(user=user).order_by('-created_date')
+
+        context = {
+            'user': user,
+            'myself': myself,
+            'user_blogs': user_blogs,
+        }
+
+        return render(request, "others_account.html", context)

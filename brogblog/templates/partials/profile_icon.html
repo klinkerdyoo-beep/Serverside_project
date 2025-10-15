@@ -1,0 +1,12 @@
+{% load static %}
+<a 
+{% if user.is_authenticated and blog.user.auth_user == user %}
+    class="pointer-events-none opacity-70 cursor-not-allowed"
+{% else %}
+    href="{% url 'others-account' blog.user.auth_user.id %}"
+{% endif %}
+>
+        <div class="w-10 h-10 rounded-full bg-cover bg-center border-2 border-slate-300"
+        style="background-image: url('{% if blog.user.profile_path %}{{ blog.user.profile_path.url }}{% else %}{% static 'no-image.png' %}{% endif %}');">
+        </div>
+</a>
