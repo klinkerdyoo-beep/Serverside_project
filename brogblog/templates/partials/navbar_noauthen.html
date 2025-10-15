@@ -1,3 +1,5 @@
+{% load static %}
+{% load blog_tags %}
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex items-center justify-between h-16">
                         <div class="flex items-center gap-4">
@@ -8,10 +10,10 @@
                                 <span>BrogBlog</span>
                             </a>
                         </div>
-                        <nav class="hidden md:flex items-center gap-8">
-                            <a class="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Home</a>
-                            <a class="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Categories</a>
-                        </nav>
+                        <div  class="flex-1 mx-4">
+                          {% navbar_search %}
+                        </div>
+
                         <div class="flex items-center gap-4">
                             <button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
                                 <svg class="text-slate-700 dark:text-slate-300" fill="currentColor" height="20px" viewBox="0 0 256 256" width="20px" xmlns="http://www.w3.org/2000/svg">

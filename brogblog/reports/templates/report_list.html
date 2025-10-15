@@ -44,12 +44,19 @@
 
                         <!-- Blog Info -->
                         <div class="flex-1">
-                            <a href="{% url 'blog-detail' report.blog.blog_id %}"
-                               class="font-bold text-lg text-blue-600 dark:text-blue-400 hover:underline">
-                                {{ report.blog.header|truncatechars:50 }}
-                            </a>
+                            {% if report.blog %}
+                                <a href="{% url 'blog-detail' report.blog.blog_id %}"
+                                class="font-bold text-lg text-blue-600 dark:text-blue-400 hover:underline">
+                                    {{ report.blog.header|truncatechars:50 }}
+                                </a>
+                            {% else %}
+                                <p class="font-bold text-lg text-gray-500 dark:text-gray-400">
+                                    {{ report.blog_name|default:"[Deleted Blog]"|truncatechars:50 }}
+                                </p>
+                            {% endif %}
+                            
                             <p class="text-sm text-gray-500 dark:text-gray-400">
-                                Blog Owner: {{ report.blog.user.auth_user.username }}
+                                Blog Owner: {% if report.blog %}{{ report.blog.user.auth_user.username }}{% else %}-{% endif %}
                             </p>
 
                             <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">

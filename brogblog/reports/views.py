@@ -18,10 +18,9 @@ from blogs.models import *
 from accounts.models import *
 
 class ReportBlogListView(View, PermissionRequiredMixin):
-    permission_required = ["reports.add_blogexpiration", "reports.change_blogexpiration", "reports.delete_blogexpiration", "reports.view_blogexpiration",
-                           "reports.view_reportblog", "reports.change_reportblog", "reports.delete_reportblog",
-                           "reports.view_reportcomment", "reports.change_reportcomment", "reports.delete_reportcomment",
-                           "blogs.change_blogstatus", "blogs.delete_blog", ]
+    permission_required = ["reports.view_blogexpiration",
+                           "reports.view_reportblog",
+                           "reports.view_reportcomment",]
     def get(self, request):
         reports = ReportBlog.objects.select_related('blog', 'reporter', 'handled_by').order_by('-reported_date')
         comment_reports = ReportComment.objects.select_related('comment', 'reporter', 'handled_by').order_by('-reported_date')
