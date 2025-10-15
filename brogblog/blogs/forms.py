@@ -85,7 +85,12 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ['category']
-
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        default_category = Category.objects.filter(name="ทั่วไป").first()
+        if default_category:
+            self.fields['category'].initial = default_category
 
 class BlogImageForm(forms.ModelForm):
     class Meta:
