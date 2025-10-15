@@ -80,10 +80,22 @@ class HomeView(View):
         
         popular_blogs = Blog.objects.filter(blogstatus__status = "public" ).order_by('-views')
 
+        myfeed_blogs = None
+        if request.user.is_authenticated:
+            user = request.user.user
+            
+            following_auth_ids = Following.objects.filter(user=request.user).values_list('follow_id', flat=True)
+            following_users = User.objects.filter(auth_user_id__in=following_auth_ids)
+
+            myfeed_blogs = Blog.objects.filter(user__in=following_users).order_by('-created_date')
+
+        else:
+            myfeed_blogs = None
         context = {
             'categories': categories,
             'blogs': blogs,
             'popular_blogs':popular_blogs,
+            'myfeed_blogs': myfeed_blogs,
             # 'search_query': search_query,
         }
         return render(request, 'home.html', context)

@@ -41,12 +41,14 @@
             </button>
 
             <!-- My Feed -->
+            {% if request.user.is_authenticated %}
             <button @click="tab='myfeed'"
                     :class="tab==='myfeed' 
                             ? 'px-3 py-2 text-sm font-bold border-b-2 border-primary text-primary' 
                             : 'px-3 py-2 text-sm font-bold border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-primary hover:border-primary transition-colors'">
                 My Feed
             </button>
+            {% endif %}
         </nav>
 
 
@@ -63,7 +65,14 @@
 
     <!-- My Feed -->
     <div x-show="tab==='myfeed'" class="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mt-5">
-        {% include "partials/blogbox_big.html" with blogs=myfeed_blogs %}
+        {% if myfeed_blogs %}
+            {% include "partials/blogbox_big.html" with blogs=myfeed_blogs %}
+        {% else %}
+            <div class="text-center text-slate-500 dark:text-slate-400">
+                No blogs from the users you are following. <br>
+                Try following more people to see their posts!
+            </div>
+        {% endif %}
     </div>
         </div>
 
