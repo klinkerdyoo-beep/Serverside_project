@@ -170,6 +170,8 @@ class BlogDetailView(View):
     def get(self, request, blog_id):
         # ดึง Blog ตาม ID หรือ 404 ถ้าไม่มี
         blog = get_object_or_404(Blog, pk=blog_id)
+        blog.views += 1
+        blog.save()
         categories = Category.objects.all()
         tags2 = Tag.objects.filter(blogtag__blog=blog)
         categories2 = Category.objects.filter(tag__in=tags2).distinct()
