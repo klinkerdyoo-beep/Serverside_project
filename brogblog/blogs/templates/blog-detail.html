@@ -195,21 +195,21 @@
                 </form>
 
 
-                <!-- Filter Dropdown -->
-<div class="relative inline-block mb-4">
-    <button id="filterBtn" class="inline-flex justify-between items-center px-4 py-2 bg-gray-200 rounded shadow hover:bg-gray-300 focus:outline-none transition">
-        <span>Filter</span> <!-- Always show "Filter" -->
-        <!-- Arrow -->
-        <svg id="filterArrow" class="ml-2 h-4 w-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-        </svg>
-    </button>
+                                <!-- Filter Dropdown -->
+                <div class="relative inline-block mb-4">
+                    <button id="filterBtn" class="inline-flex justify-between items-center px-4 py-2 bg-gray-200 rounded shadow hover:bg-gray-300 focus:outline-none transition">
+                        <span>Filter</span> <!-- Always show "Filter" -->
+                        <!-- Arrow -->
+                        <svg id="filterArrow" class="ml-2 h-4 w-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
 
-    <div id="filterDropdown" class="hidden absolute mt-2 w-40 bg-white shadow-lg rounded z-10">
-        <a href="?sort=latest" class="block px-4 py-2 hover:bg-gray-100 {% if sort_by == 'latest' %}font-semibold{% endif %}">Latest</a>
-        <a href="?sort=popular" class="block px-4 py-2 hover:bg-gray-100 {% if sort_by == 'popular' %}font-semibold{% endif %}">Most Liked</a>
-    </div>
-</div>
+                    <div id="filterDropdown" class="hidden absolute mt-2 w-40 bg-white shadow-lg rounded z-10">
+                        <a href="?sort=latest" class="block px-4 py-2 hover:bg-gray-100 {% if sort_by == 'latest' %}font-semibold{% endif %}">Latest</a>
+                        <a href="?sort=popular" class="block px-4 py-2 hover:bg-gray-100 {% if sort_by == 'popular' %}font-semibold{% endif %}">Most Liked</a>
+                    </div>
+                </div>
 
 
                 <!-- Comments List -->
@@ -227,10 +227,46 @@
 
                                 <div> 
                                     <div class="flex justify-between items-center gap-5">
-                                        <span class="font-bold">{{ comment.user.auth_user.username }}</span>
-                                        <span class="text-sm text-slate-400">{{ comment.created_date }}</span>
+                                            <span class="font-bold">{{ comment.user.auth_user.username }}</span>
+                                            <span class="text-sm text-slate-400">{{ comment.created_date }}</span>                       
                                     </div>
                                     <p class="text-slate-700 dark:text-slate-300">{{ comment.comment_text }}</p>
+                                </div>
+                                <div class="flex justify-between">
+                                    <div class="relative group">
+                                        <button class="ml-2s text-slate-400 hover:text-red-600">
+                                        ... <!-- จุดสามจุดแนวตั้ง -->
+                                        </button>
+                                        <div class="absolute max-h-max  left-20  p-2 bg-white dark:bg-slate-800 rounded shadow-lg
+                                                    opacity-0 group-hover:opacity-100
+                                                    invisible group-hover:visible
+                                                    transition-all duration-200 z-10">
+                                            {% if user.is_authenticated and blog.user.auth_user == user %}
+                                                <form method="post" action="{% url 'delete-comment' comment.comment_id %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="text-red-500 hover:text-red-700 text-sm">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            {% elif user.is_authenticated and comment.user.auth_user == user %}
+                                                <form method="post" action="{% url 'delete-comment' comment.comment_id %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="text-red-500 hover:text-red-700 text-sm">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                                <!-- user.is_staff -->
+                                            {% elif user.is_authenticated and is_admin %}
+                                                <form method="post" action="{% url 'delete-comment' comment.comment_id %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="text-red-500 hover:text-red-700 text-sm">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            {% endif %}
+
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -256,7 +292,7 @@
 
                                 <!-- Reply Form -->
                                 <div class="mt-2">
-                                    <form method="post" action="{% url 'delete-blog' blog.blog_id %}">
+                                    <form method="post" action="{% url 'blog-detail' blog.blog_id %}">
                                         {% csrf_token %}
                                         <div class="flex gap-3 items-center">
                                             <!-- Input ข้อความ reply -->

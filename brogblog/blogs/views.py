@@ -177,6 +177,7 @@ class BlogDetailView(View):
         categories = Category.objects.all()
         tags2 = Tag.objects.filter(blogtag__blog=blog)
         categories2 = Category.objects.filter(tag__in=tags2).distinct()
+        is_admin = request.user.is_authenticated and request.user.groups.filter(name='admin').exists()
 
 
         bookmarked = False
@@ -217,6 +218,7 @@ class BlogDetailView(View):
             "sort_by": sort_by,
             'bookmark_count': blog.bookmarked_by.count(),
             'bookmarked': bookmarked,
+            'is_admin': is_admin,
         }
         return render(request, "blog-detail.html", context)
     
@@ -334,6 +336,7 @@ class ReportBlogView(View):
 
         return JsonResponse({'success': 'Reported successfully'})
 
+
 class DeleteBlogView(LoginRequiredMixin, View):
     
     login_url = '/authen/login/'
@@ -410,7 +413,24 @@ class EditBlogView(LoginRequiredMixin, View):
                 "blog": blog,
             })
 
+class DeleteCommentView(LoginRequiredMixin, View):
+    login_url = '/authen/login/'
 
+    def post(self, request, comment_id):
+        comment = get_object_or_404(Comment, pk=comment_id)
+        blog = comment.blog  # ดึง blog ของ comment
+
+        print("Logged-in user:", request.user)
+        print("Comment owner auth_user:", comment.user.auth_user)
+        print("Blog owner auth_user:", blog.user.auth_user)
+
+        if (request.user != comment.user.auth_user 
+        and request.user != blog.user.auth_user 
+        and not request.user.groups.filter(name='admin').exists()):
+            raise PermissionDenied("Only the comment owner or blog owner can delete this comment.")
+
+        comment.delete()
+        return redirect(request.META.get('HTTP_REFERER', '/'))
 
 class CategoryDetailView(View):
 
