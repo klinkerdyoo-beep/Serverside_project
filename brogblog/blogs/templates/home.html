@@ -19,17 +19,53 @@
                         </div>
                     </div>
                 </section>
-                <div class="border-b border-slate-200 dark:border-slate-800 mb-6 flex justify-center">
-                    <nav class="flex gap-4">
-                        <a class="px-3 py-2 text-sm font-bold border-b-2 border-primary text-primary" href="#">Recommended</a>
-                        <a class="px-3 py-2 text-sm font-bold border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-primary hover:border-primary transition-colors" href="#">Popular</a>
-                        <a class="px-3 py-2 text-sm font-bold border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-primary hover:border-primary transition-colors" href="#">My Feed</a>
-                    </nav>
-                </div>
+                <div x-data="{ tab: 'recommended' }" class="mb-8">
 
-                <!-- blogs list -->
-                <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                        {% include "partials/blogbox_big.html" %}
-                </div>
-                <!-- blogs list -->
+    <!-- Tab buttons -->
+    <div x-data="{ tab: 'recommended' }" class="mb-6 border-b border-slate-200 dark:border-slate-800">
+        <nav class="flex justify-center gap-4">
+            <!-- Recommended -->
+            <button @click="tab='recommended'"
+                    :class="tab==='recommended' 
+                            ? 'px-3 py-2 text-sm font-bold border-b-2 border-primary text-primary' 
+                            : 'px-3 py-2 text-sm font-bold border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-primary hover:border-primary transition-colors'">
+                Recommended
+            </button>
+
+            <!-- Popular -->
+            <button @click="tab='popular'"
+                    :class="tab==='popular' 
+                            ? 'px-3 py-2 text-sm font-bold border-b-2 border-primary text-primary' 
+                            : 'px-3 py-2 text-sm font-bold border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-primary hover:border-primary transition-colors'">
+                Popular
+            </button>
+
+            <!-- My Feed -->
+            <button @click="tab='myfeed'"
+                    :class="tab==='myfeed' 
+                            ? 'px-3 py-2 text-sm font-bold border-b-2 border-primary text-primary' 
+                            : 'px-3 py-2 text-sm font-bold border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-primary hover:border-primary transition-colors'">
+                My Feed
+            </button>
+        </nav>
+
+
+
+    <!-- Recommended -->
+    <div x-show="tab==='recommended'" class="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mt-5">
+        {% include "partials/blogbox_big.html" %}
+    </div>
+
+    <!-- Popular -->
+    <div x-show="tab==='popular'" class="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mt-5">
+        {% include "partials/blogbox_big.html" with blogs=popular_blogs %}
+    </div>
+
+    <!-- My Feed -->
+    <div x-show="tab==='myfeed'" class="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mt-5">
+        {% include "partials/blogbox_big.html" with blogs=myfeed_blogs %}
+    </div>
+        </div>
+
+</div>
 {% endblock %}

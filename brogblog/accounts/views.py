@@ -117,20 +117,13 @@ class EditProfileView(LoginRequiredMixin, View):
 class MyAccountView(LoginRequiredMixin, View):
     login_url = settings.LOGIN_URL
     def get(self, request):
-        # ดึง user ปัจจุบัน (custom user)
         user = request.user.user  
-
-        # Blog ที่ user สร้างเอง
         user_blogs = Blog.objects.filter(user=user).order_by('-created_date')
 
-        # Blog ที่ user bookmark ไว้
         bookmarked_blogs = user.bookmarked_posts.all().order_by('-created_date')
 
-        # ความคิดเห็นทั้งหมดที่ user เคยเขียน
         user_comments = Comment.objects.filter(user=user).select_related('blog').order_by('-created_date')
-
-        # Blog ที่ user เคยดู (ถ้ามีการเก็บใน model เช่น BlogViewHistory)
-        # ถ้ายังไม่มี model นั้น สามารถละส่วนนี้ไว้ก่อนได้
+        history = ViewingHistory.objects.filter(user=user).order_by('-viewed_at')[:10]
         try:
             from blogs.models import BlogViewHistory
             viewed_blogs = BlogViewHistory.objects.filter(user=user).select_related('blog').order_by('-viewed_at')
@@ -143,6 +136,7 @@ class MyAccountView(LoginRequiredMixin, View):
             'bookmarked_blogs': bookmarked_blogs,
             'user_comments': user_comments,
             'viewed_blogs': viewed_blogs,
+            'history':history
         }
 
         return render(request, "my_account.html", context)

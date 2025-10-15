@@ -77,11 +77,13 @@ class HomeView(View):
         # categories = Category.objects.filter(name__icontains=search_query) if search_query else []
         blogs = Blog.objects.annotate(num_comments=Count("comment")).filter(blogstatus__status = "public" )
         categories = Category.objects.all()
-    
         
+        popular_blogs = Blog.objects.filter(blogstatus__status = "public" ).order_by('-views')
+
         context = {
             'categories': categories,
             'blogs': blogs,
+            'popular_blogs':popular_blogs,
             # 'search_query': search_query,
         }
         return render(request, 'home.html', context)
@@ -182,8 +184,13 @@ class BlogDetailView(View):
             user = request.user.user  # custom User
             bookmarked = blog in user.bookmarked_posts.all()
 
-        blog.views +=1
-        blog.save()
+            history = ViewingHistory.objects.filter(user=user, blog=blog).first()
+
+            if not history:
+                ViewingHistory.objects.create(user=user, blog=blog)
+            else:
+                history.last_viewed = timezone.now()
+                history.save()
 
         # รับ query param สำหรับ filter
         sort_by = request.GET.get("sort")  # 'latest' หรือ 'popular'

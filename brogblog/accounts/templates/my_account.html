@@ -31,28 +31,11 @@
 
         <!-- My Blogs -->
         <div x-show="tab==='blogs'" class="space-y-4">
-            {% for blog in user_blogs %}
-            <div class="p-4 bg-white dark:bg-slate-800 rounded-lg shadow hover:shadow-md transition">
-                <div class="flex flex-col md:flex-row gap-4">
-                    {% with blog.blogimage_set.all.0 as first_image %}
-                        {% if first_image and first_image.image_path %}
-                            <div class="w-full md:w-1/3 h-40 bg-cover bg-center rounded-lg" 
-                                style="background-image: url('{{ first_image.image_path.url }}');">
-                            </div>
-                        {% endif %}
-                    {% endwith %}
-                    <div class="flex-1">
-                        <h3 class="text-lg font-semibold mb-1 text-slate-900 dark:text-white">
-                            <a href="{% url 'blog-detail' blog.blog_id %}" class="hover:underline">{{ blog.header }}</a>
-                        </h3>
-                        <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">{{ blog.body|truncatechars:100 }}</p>
-                        <div class="mt-2 text-xs text-slate-400">Created: {{ blog.created_date|date:"M j, Y" }}</div>
-                    </div>
-                </div>
-            </div>
-            {% empty %}
+            {% if user_blogs %}
+             {% include "partials/blogbox_wide.html" %}
+            {% else %}
             <p class="text-center text-slate-500 dark:text-slate-400">You haven’t created any blogs yet.</p>
-            {% endfor %}
+            {% endif %}
         </div>
 
         <!-- Bookmarks -->
@@ -77,7 +60,23 @@
                 <a href="{% url 'blog-detail' comment.blog.blog_id %}" class="text-blue-500 text-sm hover:underline">
                     On: {{ comment.blog.header }}
                 </a>
-                <div class="text-xs text-slate-400 mt-1">{{ comment.created_date|date:"M j, Y H:i" }}</div>
+                <div class="flex justify-between">
+                    <div class="text-xs text-slate-400 mt-1">{{ comment.created_date|date:"M j, Y H:i" }}</div>
+                    <div class=" flex">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" stroke="none">
+                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 
+                                            5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 
+                                            4.5 2.09C13.09 3.81 14.76 3 16.5 
+                                            3 19.58 3 22 5.42 22 8.5c0 
+                                            3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                                             fill="none" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span class="ml-1 text-sm text-slate-700 dark:text-slate-300">
+                            {{ comment.likes }}
+                        </span>
+                    </div>                    
+                </div>
+
             </div>
             {% empty %}
             <p class="text-center text-slate-500 dark:text-slate-400">No comments yet.</p>
