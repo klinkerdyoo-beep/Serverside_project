@@ -77,11 +77,13 @@ class HomeView(View):
         # categories = Category.objects.filter(name__icontains=search_query) if search_query else []
         blogs = Blog.objects.annotate(num_comments=Count("comment")).filter(blogstatus__status = "public" )
         categories = Category.objects.all()
-    
         
+        popular_blogs = Blog.objects.filter(blogstatus__status = "public" ).order_by('-views')
+
         context = {
             'categories': categories,
             'blogs': blogs,
+            'popular_blogs':popular_blogs,
             # 'search_query': search_query,
         }
         return render(request, 'home.html', context)
