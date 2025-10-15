@@ -36,7 +36,8 @@ class HandleReportBlogForm(forms.ModelForm):
                     blog.save()
                 elif action == 'delete':
                     blog.delete()
-                    blog = None
+                    report.blog = None
+                    blog = None 
 
             report.status = 'resolved'
             if self.request_user:
@@ -46,7 +47,7 @@ class HandleReportBlogForm(forms.ModelForm):
 
             # Create log
             LogReport.objects.create(
-                blog=blog if blog else None,
+                blog=blog,
                 blog_name=blog_name,
                 action_taken=action,
                 reported_by=report.reporter,
