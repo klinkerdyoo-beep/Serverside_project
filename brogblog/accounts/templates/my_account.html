@@ -31,11 +31,51 @@
 
         <!-- My Blogs -->
         <div x-show="tab==='blogs'" class="space-y-4">
-            {% if user_blogs %}
-             {% include "partials/blogbox_wide.html" %}
+
+            <!-- Filter Buttons -->
+            <div class="flex gap-2 mb-4">
+                <a href="{% url 'my-account' %}" 
+                class="px-3 py-1 rounded {% if not request.GET.reported %}bg-blue-500 text-white{% else %}bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200{% endif %}">
+                    All
+                </a>
+                <a href="{% url 'my-account' %}?reported=1" 
+                class="px-3 py-1 rounded {% if request.GET.reported == '1' %}bg-blue-500 text-white{% else %}bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200{% endif %}">
+                    Reported
+                </a>
+            </div>
+
+            <!-- Blogs List -->
+            {% if request.GET.reported == '1' %}
+                {% if user_blogs_reporte %}
+                    {% for blog in user_blogs_reporte %}
+                    <div class="text-red-500 p-3 rounded-md mb-2">
+                        <h3 class="font-bold">{{ blog.title }}</h3>
+                        <ul class="ml-4 list-disc">
+                            {% for report in blog.reportblog_set.all %}
+                                <li>
+                                    Reason: {{ report.reason|default:"No reason" }} | Reported date: {{ report.reported_date }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% include "partials/blogbox_wide.html" with blogs=user_blogs_reporte %}
+                    {% endfor %}
+
+                {% else %}
+                    <p class="text-center text-slate-500 dark:text-slate-400">
+                        You haven’t created any reported blogs yet.
+                    </p>
+                {% endif %}
             {% else %}
-            <p class="text-center text-slate-500 dark:text-slate-400">You haven’t created any blogs yet.</p>
+                {% if user_blogs %}
+                    {% include "partials/blogbox_wide.html" with blogs=user_blogs %}
+                {% else %}
+                    <p class="text-center text-slate-500 dark:text-slate-400">
+                        You haven’t created any blogs yet.
+                    </p>
+                {% endif %}
             {% endif %}
+
         </div>
 
         <!-- Bookmarks -->

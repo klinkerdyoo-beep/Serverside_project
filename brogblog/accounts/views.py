@@ -119,6 +119,13 @@ class MyAccountView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user.user  
         user_blogs = Blog.objects.filter(user=user).order_by('-created_date')
+        filter_reported = request.GET.get("reported")
+
+        user_blogs_reporte = None 
+
+        if filter_reported == "1":
+            # ดึง blog ที่มี report พร้อม prefetch report เพื่อเอา reason
+            user_blogs_reporte = user_blogs.filter(reportblog__isnull=False).distinct().prefetch_related('reportblog_set')
 
         bookmarked_blogs = user.bookmarked_posts.all().order_by('-created_date')
 
@@ -136,7 +143,9 @@ class MyAccountView(LoginRequiredMixin, View):
             'bookmarked_blogs': bookmarked_blogs,
             'user_comments': user_comments,
             'viewed_blogs': viewed_blogs,
-            'history':history
+            'history':history,
+            'user_blogs_reporte':user_blogs_reporte,
+            'filter_reported':filter_reported
         }
 
         return render(request, "my_account.html", context)
