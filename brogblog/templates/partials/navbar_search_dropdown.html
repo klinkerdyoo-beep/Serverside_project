@@ -12,7 +12,7 @@
         <div class="p-2 border-b border-gray-200 dark:border-gray-700">
           <h4 class="text-sm font-bold text-gray-700 dark:text-gray-200">Categories</h4>
           {% for category in categories %}
-            <a href="#"
+            <a href="{% url 'category-detail' category.name %}"
                class="block px-2 py-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded"
                @click="open = false">
               {{ category.name }}
@@ -25,12 +25,16 @@
       <div class="p-2">
         <h4 class="text-sm font-bold text-gray-700 dark:text-gray-200">Tags</h4>
         {% for tag in tags %}
-            <a href="#" 
-               class="block px-2 py-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded"
-               @click="open = false">
-              {{ tag.name }}
-            </a>
-        {%endfor%}
+            {% if tag.category %}
+                <a href="{% url 'category-detail-tag' tag.category.name tag.tag_id %}" 
+                  class="block px-2 py-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded"
+                  @click="open = false">
+                  {{ tag.name }}
+                </a>
+            {% else %}
+                <span class="block px-2 py-1 text-gray-400">{{ tag.name }}</span>
+            {% endif %}
+        {% endfor %}
       </div>
       {% endif %}
 
@@ -38,7 +42,7 @@
         <div class="p-2">
           <h4 class="text-sm font-bold text-gray-700 dark:text-gray-200">Blogs</h4>
           {% for blog in blogs %}
-            <a href="{% url 'blog-detail' blog_id=blog.blog_id %}" 
+            <a href="{% url 'blog-detail' blog.blog_id %}" 
                class="block px-2 py-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded"
                @click="open = false">
               {{ blog.header }}

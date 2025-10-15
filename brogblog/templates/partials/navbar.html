@@ -57,9 +57,11 @@
       <div x-data="{ open: false }" class="relative">
         <!-- Profile Picture Button -->
         <button @click="open = !open" class="focus:outline-none">
-          <div class="w-10 h-10 rounded-full bg-cover bg-center border-2 border-slate-300"
-            style="background-image: url('{% if request.user.user.profile_path %}{{ request.user.user.profile_path.url }}{% else %}{% static 'no-image.png' %}{% endif %}');">
-          </div>
+          <a href="{% url 'my-account' %}">
+            <div class="w-10 h-10 rounded-full border-2 border-slate-300"
+                style="background-image: url('{% if request.user.user.profile_path %}{{ request.user.user.profile_path.url }}{% else %}{% static 'no-image.png' %}{% endif %}'); background-size: cover; background-position: center;">
+            </div>
+          </a>
         </button>
 
         <!-- Dropdown Menu -->
