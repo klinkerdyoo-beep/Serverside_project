@@ -51,21 +51,25 @@ def is_my_blog(user, author):
 translate_client = translate.Client()
 
 def translate_blog(request, blog_id):
-    target_lang = "en" 
+    target_lang = "en"
     try:
         blog = Blog.objects.get(pk=blog_id)
     except Blog.DoesNotExist:
         return JsonResponse({"error": "Blog not found"}, status=404)
 
-    translated_header = translate_client.translate(blog.header, target_language=target_lang)["translatedText"]
-    translated_body = translate_client.translate(blog.body, target_language=target_lang)["translatedText"]
+
+    translated_header = translate_client.translate(
+        blog.header or "", target_language=target_lang
+    )["translatedText"]
+    translated_body = translate_client.translate(
+        blog.body or "", target_language=target_lang
+    )["translatedText"]
 
     return JsonResponse({
-        "blog_id": blog.id,
+        "blog_id": blog.blog_id,
         "header": translated_header,
         "body": translated_body,
     })
-
 
 class HomeView(View):
     def get(self, request):

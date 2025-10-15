@@ -15,4 +15,5 @@ urlpatterns = [
     path("delete-blog/<int:blog_id>/", views.DeleteBlogView.as_view(), name="delete-blog"),
     path('category-detail/<str:name>/', views.CategoryDetailView.as_view(), name='category-detail'),
     path('category-detail/<str:name>/<int:tag_id>/',  views.CategoryDetailView.as_view(), name='category-detail-tag'),
+    path("translate/<int:blog_id>/", views.translate_blog, name="translate"),
 ]
