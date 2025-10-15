@@ -13,9 +13,9 @@
             <button @click="tab='blogs'" :class="tab==='blogs' ? 'border-b-2 border-blue-600 text-blue-600' : ''">
                 Blogs
             </button>
-            <button @click="tab='comments'" :class="tab==='comments' ? 'border-b-2 border-blue-600 text-blue-600' : ''">
+            <!-- <button @click="tab='comments'" :class="tab==='comments' ? 'border-b-2 border-blue-600 text-blue-600' : ''">
                 Comments
-            </button>
+            </button> -->
             <button @click="tab='history'" :class="tab==='history' ? 'border-b-2 border-blue-600 text-blue-600' : ''">
                 History
             </button>
@@ -27,15 +27,20 @@
                 <div class="border rounded-lg shadow-sm p-4 bg-white dark:bg-gray-800">
                     <div class="flex items-start gap-4">
                         <!-- blog img -->
-                        {% with report.blog.blogimage_set.all.0 as first_image %}
-                            {% if first_image and first_image.image_path %}
-                                <div class="w-20 h-20 bg-center bg-no-repeat bg-cover rounded-md flex-shrink-0"
-                                    style="background-image: url('{{ first_image.image_path.url }}');">
-                                </div>
-                            {% else %}
-                                <div class="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-md flex-shrink-0"></div>
-                            {% endif %}
-                        {% endwith %}
+                        {% if report.blog %}
+                            {% with report.blog.blogimage_set.all.0 as first_image %}
+                                {% if first_image and first_image.image_path %}
+                                    <div class="w-20 h-20 bg-center bg-no-repeat bg-cover rounded-md flex-shrink-0"
+                                        style="background-image: url('{{ first_image.image_path.url }}');">
+                                    </div>
+                                {% else %}
+                                    <div class="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-md flex-shrink-0"></div>
+                                {% endif %}
+                            {% endwith %}
+                        {% else %}
+                            <div class="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-md flex-shrink-0"></div>
+                        {% endif %}
+
 
                         <!-- Blog Info -->
                         <div class="flex-1">
@@ -44,16 +49,17 @@
                                 {{ report.blog.header|truncatechars:50 }}
                             </a>
                             <p class="text-sm text-gray-500 dark:text-gray-400">
-                                {{ report.blog.category.name }} | by {{ report.blog.user.auth_user.username }}
+                                Blog Owner: {{ report.blog.user.auth_user.username }}
                             </p>
 
                             <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                                Reported by: {{ report.reporter.auth_user.username }} <br>
+                                Reported by: {{ report.reporter.auth_user.username }}<br>
+                                Reason: {{ report.reason }}<br>
                                 Status: 
-                                <span class="px-2 py-1 rounded
-                                    {% if report.status == 'resolved' %}bg-green-500 text-white
-                                    {% elif report.status == 'rejected' %}bg-red-500 text-white
-                                    {% else %}bg-yellow-400 text-gray-900{% endif %}">
+                                <span class="px-2 rounded
+                                    {% if report.status == 'resolved' %} text-green-500 font-bold
+                                    {% elif report.status == 'rejected' %} text-red-500 font-bold
+                                    {% else %}bg-yellow-200 text-gray-800{% endif %}">
                                     {{ report.status|capfirst }}
                                 </span>
                                 {% if report.handled_by %}
@@ -75,12 +81,12 @@
                                     </select>
 
                                     <button type="submit" name="action" value="resolve" 
-                                            class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                                            class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-700 transition">
                                         Resolve
                                     </button>
 
                                     <button type="submit" name="action" value="reject" 
-                                            class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition">
+                                            class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-700 transition">
                                         Reject
                                     </button>
                                 </form>
@@ -94,17 +100,17 @@
         </div>
 
         <!-- Comment Reports -->
-        <div x-show="tab==='comments'" class="space-y-6">
+        <!-- <div x-show="tab==='comments'" class="space-y-6">
             {% for report in comment_reports %}
                 <div class="border rounded-lg shadow-sm p-4 bg-white dark:bg-gray-800">
                     <p class="text-sm text-gray-600 dark:text-gray-300">
                         Comment by {{ report.comment.user.username }}: {{ report.comment.comment_text|truncatechars:50 }} <br>
                         Reported by: {{ report.reporter.username }} <br>
                         Status: 
-                        <span class="px-2 py-1 rounded
+                        <span class="px-2 rounded
                             {% if report.status == 'resolved' %}bg-green-500 text-white
                             {% elif report.status == 'rejected' %}bg-red-500 text-white
-                            {% else %}bg-yellow-400 text-gray-900{% endif %}">
+                            {% else %}bg-yellow-400 text-gray-800{% endif %}">
                             {{ report.status|capfirst }}
                         </span>
                         {% if report.handled_by %}
@@ -115,11 +121,35 @@
             {% empty %}
                 <p class="text-center text-gray-500 dark:text-gray-400">No comment reports.</p>
             {% endfor %}
-        </div>
+        </div> -->
 
-        <!-- History (Optional) -->
+        <!-- Log log log -->
         <div x-show="tab==='history'" class="space-y-6">
-            <p class="text-gray-500 dark:text-gray-400">History section is under construction.</p>
+            {% if logs %}
+                {% for log in logs %}
+                    <div class="border rounded-lg shadow-sm p-4 bg-white dark:bg-gray-800">
+                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                            <strong>Blog:</strong>
+                            {% if log.blog %}
+                                <a href="{% url 'blog-detail' log.blog.blog_id %}" class="text-blue-600 dark:text-blue-400 hover:underline">
+                                    {{ log.blog_name|truncatechars:50 }}
+                                </a>
+                            {% else %}
+                                {{ log.blog_name|truncatechars:50 }} (Deleted)
+                            {% endif %} <br>
+
+                            <strong>Action:</strong> {{ log.action_taken|capfirst }} <br>
+                            <strong>Reported by:</strong> {{ log.reported_by.auth_user.username }} <br>
+                            <strong>Handled by:</strong> {{ log.handled_by.auth_user.username }} <br>
+                            <strong>Resolved at:</strong> {{ log.resolved_at|date:"M d, Y H:i" }}
+                        </p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-center text-gray-500 dark:text-gray-400">No history logs yet.</p>
+            {% endif %}
+</div>
+
         </div>
     </div>
 </section>
