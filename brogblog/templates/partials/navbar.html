@@ -15,10 +15,11 @@
         </svg>
         <span>BrogBlog</span>
       </a>
-
+      {% if perms.blogs.add_blog %}
       <a href="{% url 'create-blog' %}" class="px-3 py-1 rounded bg-primary text-white hover:bg-primary-dark transition-colors">
         Create Blog
       </a>
+      {% endif %}
     </div>
 
   <div  class="flex-1 mx-4">
@@ -57,11 +58,11 @@
       <div x-data="{ open: false }" class="relative">
         <!-- Profile Picture Button -->
         <button @click="open = !open" class="focus:outline-none">
-          <a href="{% url 'my-account' %}">
+          <!-- <a href="{% url 'my-account' %}"> -->
             <div class="w-10 h-10 rounded-full border-2 border-slate-300"
                 style="background-image: url('{% if request.user.user.profile_path %}{{ request.user.user.profile_path.url }}{% else %}{% static 'no-image.png' %}{% endif %}'); background-size: cover; background-position: center;">
             </div>
-          </a>
+          <!-- </a> -->
         </button>
 
         <!-- Dropdown Menu -->
@@ -71,8 +72,13 @@
           <div class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
             {{ request.user.username }}
           </div>
+            {% if perms.reports.view_blogexpiration or perms.reports.view_reportblog or perms.reports.view_reportcomment %}
+                <a href="{% url 'report-list' %}" class="block px-4 py-2 text-sm text-red-700 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-slate-700">
+                  Manage Report
+                </a>
+            {% endif %}
           <!-- profile -->
-          <a href="" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-slate-700">My Profile</a>
+          <a href="{% url 'my-account' %}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-slate-700">My Profile</a>
           <!-- profile -->
           <a href="{% url 'edit-profile' %}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-slate-700">Edit Profile</a>
           <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-slate-700">Logout</a>
