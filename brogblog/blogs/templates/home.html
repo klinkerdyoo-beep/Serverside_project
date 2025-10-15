@@ -65,7 +65,8 @@
 
     <!-- My Feed -->
     <div x-show="tab==='myfeed'" class="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mt-5">
-        {% if myfeed_blogs %}
+        {% if request.user.is_authenticated %}
+        {% elif myfeed_blogs %}
             {% include "partials/blogbox_big.html" with blogs=myfeed_blogs %}
         {% else %}
             <div class="text-center text-slate-500 dark:text-slate-400">
