@@ -12,6 +12,7 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpRequest
 
+from .forms import *
 from .models import *
 from blogs.models import *
 from accounts.models import *
@@ -28,25 +29,30 @@ class ReportBlogListView(View):
 class HandleReportBlogView(View):
     def post(self, request, report_id):
         report = get_object_or_404(ReportBlog, reportblog_id=report_id)
-        action = request.POST.get('action')  #'resolve' 'reject'
-        resolve_type = request.POST.get('resolve_type')  #'private' 'delete'
+        action = request.POST.get('action')  # 'resolve' or 'reject'
 
-        if action == 'resolve':
+        try:
+            with transaction.atomic():
+                if action == 'resolve':
+                    form = HandleReportBlogForm(
+                        request.POST, instance=report, request_user=request.user
+                    )
+                    if form.is_valid():
+                        form.save()
+                    else:
+                        reports = ReportBlog.objects.select_related('blog', 'reporter', 'handled_by').all()
+                        return render(request, "report_list.html", {"reports": reports, "form_errors": form.errors})
+                elif action == 'reject':
+                    report.status = 'rejected'
+                    report.handled_by = User.objects.get(auth_user=request.user)
+                    report.save()
+                    
+        except Exception as e:
+            print('exception: ', e)
+            reports = ReportBlog.objects.select_related('blog', 'reporter', 'handled_by').all()
+            return render(request, "report_list.html", {
+                "reports": reports,
+                "error": "Failed to process the report"
+            })
 
-            if resolve_type == 'private':
-                private_status, _ = BlogStatus.objects.get_or_create(status='private')
-                report.blog.blogstatus = private_status
-                report.blog.save()
-                
-            elif resolve_type == 'delete':
-                report.blog.delete()
-
-            report.status = 'resolved'
-            report.handled_by = request.user.user 
-
-        elif action == 'reject':
-            report.status = 'rejected'
-            report.handled_by = request.user.user
-
-        report.save()
         return redirect('report-list')

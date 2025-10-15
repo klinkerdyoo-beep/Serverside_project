@@ -27,15 +27,20 @@
                 <div class="border rounded-lg shadow-sm p-4 bg-white dark:bg-gray-800">
                     <div class="flex items-start gap-4">
                         <!-- blog img -->
-                        {% with report.blog.blogimage_set.all.0 as first_image %}
-                            {% if first_image and first_image.image_path %}
-                                <div class="w-20 h-20 bg-center bg-no-repeat bg-cover rounded-md flex-shrink-0"
-                                    style="background-image: url('{{ first_image.image_path.url }}');">
-                                </div>
-                            {% else %}
-                                <div class="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-md flex-shrink-0"></div>
-                            {% endif %}
-                        {% endwith %}
+                        {% if report.blog %}
+                            {% with report.blog.blogimage_set.all.0 as first_image %}
+                                {% if first_image and first_image.image_path %}
+                                    <div class="w-20 h-20 bg-center bg-no-repeat bg-cover rounded-md flex-shrink-0"
+                                        style="background-image: url('{{ first_image.image_path.url }}');">
+                                    </div>
+                                {% else %}
+                                    <div class="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-md flex-shrink-0"></div>
+                                {% endif %}
+                            {% endwith %}
+                        {% else %}
+                            <div class="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-md flex-shrink-0"></div>
+                        {% endif %}
+
 
                         <!-- Blog Info -->
                         <div class="flex-1">
@@ -44,16 +49,17 @@
                                 {{ report.blog.header|truncatechars:50 }}
                             </a>
                             <p class="text-sm text-gray-500 dark:text-gray-400">
-                                {{ report.blog.category.name }} | by {{ report.blog.user.auth_user.username }}
+                                Blog Owner: {{ report.blog.user.auth_user.username }}
                             </p>
 
                             <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                                Reported by: {{ report.reporter.auth_user.username }} <br>
+                                Reported by: {{ report.reporter.auth_user.username }}<br>
+                                Reason: {{ report.reason }}<br>
                                 Status: 
                                 <span class="px-2 py-1 rounded
-                                    {% if report.status == 'resolved' %}bg-green-500 text-white
-                                    {% elif report.status == 'rejected' %}bg-red-500 text-white
-                                    {% else %}bg-yellow-400 text-gray-900{% endif %}">
+                                    {% if report.status == 'resolved' %} text-green-500 font-bold
+                                    {% elif report.status == 'rejected' %} text-red-500 font-bold
+                                    {% else %}bg-yellow-200 text-gray-800 font-bold{% endif %}">
                                     {{ report.status|capfirst }}
                                 </span>
                                 {% if report.handled_by %}
@@ -75,12 +81,12 @@
                                     </select>
 
                                     <button type="submit" name="action" value="resolve" 
-                                            class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                                            class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-700 transition">
                                         Resolve
                                     </button>
 
                                     <button type="submit" name="action" value="reject" 
-                                            class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition">
+                                            class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-700 transition">
                                         Reject
                                     </button>
                                 </form>
