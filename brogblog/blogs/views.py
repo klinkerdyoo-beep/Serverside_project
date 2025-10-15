@@ -43,6 +43,11 @@ from datetime import timedelta
 
 from google.cloud import translate_v2 as translate
 
+def is_my_blog(user, author):
+    if user == author:
+        return True
+    return False
+
 translate_client = translate.Client()
 
 def translate_blog(request, blog_id):
