@@ -9,7 +9,7 @@
     {% csrf_token %}
     <div class="max-w-4xl mx-auto p-6 md:p-8">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold">Create post</h1>
+            <h1 class="text-3xl font-bold">Edit Post</h1>
             <!-- Alpine.js-->
             <div x-data="{ open: false, selected: '{{ blogform.blogstatus.value|default_if_none:"draft" }}' }" class="relative">
                 <button type="button"
@@ -41,40 +41,6 @@
                 {{ blogform.blogstatus.errors }}
             </div>
         </div>
-        
-        
-        <div class="mb-6">
-            <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-300">Category</label>
-
-            <div class="relative inline-block w-full">
-                
-                {{ catform.category }}
-                {{ catform.category.errors }}
-            </div>
-
-                <div x-data="tagInput()" class="w-full">
-
-                    <!-- Tag display -->
-                    <div class="flex flex-wrap gap-2 border border-border-light dark:border-border-dark rounded-md p-2">
-                        <template x-for="(tag, index) in tags" :key="index">
-                            <span class="flex items-center bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-3 py-1 rounded-full text-sm">
-                                <span x-text="tag"></span>
-                                <button type="button" class="ml-2 text-gray-500 hover:text-red-500" @click="removeTag(index)">X</button>
-                            </span>
-                        </template>
-
-                        <!-- Tag input -->
-                        <input type="text" x-model="input" @keydown.enter.prevent="addTag"
-                            @keydown.,.prevent="addTag"
-                            placeholder="Add a tag and press Enter"
-                            class="flex-1 border-0 focus:ring-0 bg-transparent outline-none text-text-light dark:text-text-dark" />
-                    </div>
-                    <input type="hidden" name="tags" :value="tags.join(',')" />
-                    
-                </div>
-        </div>
-
-
 
             <div class="space-y-6">
                 <div>
@@ -84,10 +50,6 @@
                     {{ blogform.header.errors }}
                 </div>
 
-                <!-- <div>
-                    <input class="w-1/3 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-md p-3 focus:ring-primary focus:border-primary placeholder-text-secondary-light dark:placeholder-text-secondary-dark" placeholder="Add tags" type="text"/>
-                </div> -->
-                
                 <div class="border border-border-light dark:border-border-dark rounded-md">
                     <div class="flex items-center space-x-2 p-2 border-b border-border-light dark:border-border-dark flex-wrap">
 
@@ -115,15 +77,32 @@
                         </div>
                         <div class="flex justify-center w-full">
                             <!-- Image preview -->
-                            <img id="preview" class="m-auto rounded-lg border max-h-64 object-contain hidden" alt="Preview" />
+                            <div class="flex justify-center w-full">
+                                {% if blog.blogimage_set.first and blog.blogimage_set.first.image_path %}
+                                    <img id="preview" 
+                                        src="{{ blog.blogimage_set.first.image_path.url }}" 
+                                        class="m-auto rounded-lg border max-h-64 object-contain" 
+                                        alt="Blog Image" />
+                                {% else %}
+                                    <img id="preview" class="m-auto rounded-lg border max-h-64 object-contain hidden" alt="Preview" />
+                                {% endif %}
+                            </div>
                         </div>
+                        <input type="hidden" name="delete_old_image" id="delete_old_image" value="0">
+                        {% if blog.blogimage_set.first and blog.blogimage_set.first.image_path %}
+                            <button type="button" id="delete_old_btn"
+                                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700">
+                                Delete Current Image
+                            </button>
+                        {% endif %}
                     </div>
                     {{ blogform.body }}
                     {{ blogform.body.errors }}
                 </div>
                 <div class="flex justify-end space-x-4">
-                <button type="submit" name="action" value="draft" class="px-6 py-2 rounded-full font-semibold bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-light dark:text-text-dark hover:bg-gray-100 dark:hover:bg-gray-700">Save Draft</button>
-                <button type="submit" name="action" value="public" class="px-6 py-2 rounded-full font-semibold bg-primary text-white hover:bg-blue-700">Post</button>
+                    <button type="submit" name="action" value="public" class="px-6 py-2 rounded-full font-semibold bg-primary text-white hover:bg-blue-700">
+                        Update Post
+                    </button>
                 </div>
             </div>
         </div>
@@ -132,6 +111,22 @@
 {% endblock %}
 {% block script %}
 <script>
+
+    const deleteOldBtn = document.getElementById('delete_old_btn');
+    const deleteOldInput = document.getElementById('delete_old_image');
+
+    if (deleteOldBtn) {
+        deleteOldBtn.addEventListener('click', () => {
+            // ซ่อน preview
+            preview.src = '';
+            preview.classList.add('hidden');
+            // ตั้งค่า hidden input ให้ลบจริงตอน submit
+            deleteOldInput.value = '1';
+            // ซ่อนปุ่มตัวเอง
+            deleteOldBtn.classList.add('hidden');
+        });
+    }
+
     function tagInput() {
         return {
             input: '',
@@ -165,10 +160,12 @@
     })
     remove_btn.addEventListener('click', () => {
         image.value = "";
-        preview.src = "";
-        preview.classList.add('hidden');
+        // ถ้ามีรูปเดิม แสดงรูปเดิม ไม่ซ่อน
+        preview.src = "{% if blog.blogimage_set.first and blog.blogimage_set.first.image_path %}{{ blog.blogimage_set.first.image_path.url }}{% else %}''{% endif %}";
+        preview.classList.toggle('hidden', !preview.src); // ซ่อนเฉพาะถ้าไม่มีรูปเดิม
         upload_text.innerHTML = " Upload Image";
         remove_btn.classList.add('hidden');
     });
+
 </script>
 {% endblock %}

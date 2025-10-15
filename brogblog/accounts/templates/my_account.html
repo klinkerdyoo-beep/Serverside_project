@@ -15,7 +15,7 @@
             <p class="text-slate-500 dark:text-slate-400">@{{ user.auth_user.username|lower }}</p>
             <p class="mt-2 text-slate-700 dark:text-slate-300">Joined: {{ user.auth_user.date_joined|date:"F j, Y" }}</p>
             <div class="mt-4">
-                <a href="#" class="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark">Edit Profile</a>
+                <a href="{% url 'edit-profile' %}" class="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark">Edit Profile</a>
             </div>
         </div>
     </div>

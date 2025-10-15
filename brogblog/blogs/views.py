@@ -182,6 +182,9 @@ class BlogDetailView(View):
             user = request.user.user  # custom User
             bookmarked = blog in user.bookmarked_posts.all()
 
+        blog.views +=1
+        blog.save()
+
         # รับ query param สำหรับ filter
         sort_by = request.GET.get("sort")  # 'latest' หรือ 'popular'
         comments = Comment.objects.filter(blog=blog, parent__isnull=True)
@@ -340,7 +343,67 @@ class DeleteBlogView(LoginRequiredMixin, View):
 
         blog.delete()
         return redirect('home')
-    
+
+class EditBlogView(LoginRequiredMixin, View):
+    login_url = settings.LOGIN_URL
+
+    def get(self, request, blog_id):
+        blog = get_object_or_404(Blog, pk=blog_id, user__auth_user=request.user)
+
+        blogform = BlogForm(instance=blog)
+        imgform = BlogImageForm(instance=getattr(blog, 'blogimage', None))
+
+        blog_status = BlogStatus.objects.all()
+
+        context = {
+            "status": blog_status,
+            "blogform": blogform,
+            "imgform": imgform,
+            "blog": blog,
+        }
+        return render(request, "edit_blog.html", context)
+
+    def post(self, request, blog_id):
+        blog = get_object_or_404(Blog, pk=blog_id, user__auth_user=request.user)
+        blogform = BlogForm(request.POST, instance=blog)
+        imgform = BlogImageForm(request.POST, request.FILES, instance=getattr(blog, 'blogimage', None))
+
+        try:
+            with transaction.atomic():
+                if blogform.is_valid() and imgform.is_valid():
+                    blog = blogform.save(commit=False)
+                    blog.blogstatus = BlogStatus.objects.get(status='public')
+                    blog.save()
+
+                    delete_old_image = request.POST.get('delete_old_image') == '1'
+
+                    if delete_old_image:
+                        for old_img in blog.blogimage_set.all():
+                            if old_img.image_path:
+                                old_img.image_path.delete(save=False)  # ลบไฟล์จาก storage
+                            old_img.delete()
+
+                    if imgform.cleaned_data.get('image_path'):
+                        for old_img in blog.blogimage_set.all():
+                            if old_img.image_path:
+                                old_img.image_path.delete(save=False)  # ลบไฟล์จาก storage
+                            old_img.delete()
+                        blogimg = imgform.save(commit=False)
+                        blogimg.blog = blog
+                        blogimg.save()
+
+                    return redirect('home')
+                else:
+                    raise transaction.TransactionManagementError("Form invalid")
+        except Exception as e:
+            print("exception in edit:", e)
+            return render(request, "edit_blog.html", {
+                "blogform": blogform,
+                "imgform": imgform,
+                "blog": blog,
+            })
+
+
 
 class CategoryDetailView(View):
 
@@ -362,3 +425,4 @@ class CategoryDetailView(View):
             'blogs': blogs,
             'selected_tag_id': tag_id
         })
+    
