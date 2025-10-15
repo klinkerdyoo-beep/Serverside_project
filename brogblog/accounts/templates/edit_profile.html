@@ -12,7 +12,7 @@
         <!-- Profile Image -->
         <div class="flex items-center gap-6">
     <div class="relative w-24 h-24">
-        <div class="w-full h-full rounded-full bg-cover bg-center border-2 border-slate-300"
+        <div id="preview" class="w-full h-full rounded-full bg-cover bg-center border-2 border-slate-300"
              style="background-image: url('{% if user.user.profile_path %}{{ user.user.profile_path.url }}{% else %}{% static 'img/no-img-user.png' %}{% endif %}');">
         </div>
         
@@ -91,4 +91,20 @@
         </div>
     </form>
 </div>
+{% endblock %}
+{% block script %}
+<script>
+    // ใช้ id เหมือนที่ตั้งกับ label
+    const image = document.getElementById('id_profile_path')
+    const preview = document.getElementById('preview')
+
+    image.addEventListener('change', () => {
+      const [file] = image.files
+      if (file) {
+        const imageURL = URL.createObjectURL(file)
+        preview.style.backgroundImage = `url('${imageURL}')`
+        preview.classList.remove('hidden')
+      }
+    })
+</script>
 {% endblock %}

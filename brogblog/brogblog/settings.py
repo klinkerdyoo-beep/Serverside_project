@@ -19,6 +19,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 LOGIN_URL = "/authen/login/"
 
+from dotenv import load_dotenv
+
+load_dotenv()
+GOOGLE_APPLICATION_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -28,7 +33,7 @@ SECRET_KEY = 'django-insecure-qid8hg3upet$y*=#=52kq9eq64tqatukiuran9eo*m$gd%93*9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
